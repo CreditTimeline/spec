@@ -1,0 +1,26 @@
+source_system,raw_account_type,canonical_account_type,confidence,source_refs,notes
+equifax,Credit Card,credit_card,high,"local:Equifax_2026-02-07",Direct label match
+equifax,Budget Card / Revolving Credit,budget_account,high,"local:Equifax_2026-02-07",Use budget_account to preserve distinct product type
+equifax,Mortgage,mortgage,high,"local:Equifax_2026-02-07",Direct label match
+equifax,Property Rental,rental,high,"local:Equifax_2026-02-07",Rental tradeline
+equifax,Loan,unsecured_loan,high,"local:Equifax_2026-02-07",Unsecured unless secured flag present in extensions
+equifax,Current Account,current_account,high,"local:Equifax_2026-02-07",Direct label match
+equifax,Communications Supplier,telecom,high,"local:Equifax_2026-02-07",Telecom supplier tradeline
+equifax,Utilities Agreements,utility,high,"local:Equifax_2026-02-07",Utility provider tradeline
+transunion,Credit Card,credit_card,high,"local:TransUnion_2026-02-07",Direct label match
+transunion,Mortgage (unspecified type),mortgage,high,"local:TransUnion_2026-02-07",Map to mortgage with subtype in extensions
+transunion,Unsecured Loan,unsecured_loan,high,"local:TransUnion_2026-02-07",Direct label match
+transunion,Current Account,current_account,high,"local:TransUnion_2026-02-07",Direct label match
+transunion,Telecommunications Supplier,telecom,high,"local:TransUnion_2026-02-07",Telecom supplier tradeline
+transunion,Utility,utility,high,"local:TransUnion_2026-02-07",Utility supplier tradeline
+transunion,Property Rental,rental,high,"local:TransUnion_2026-02-07",Rental tradeline
+transunion,Budget Account,budget_account,high,"local:TransUnion_2026-02-07",Explicit budget account product
+experian,Credit card,credit_card,medium,"https://www.experian.co.uk/consumer/statutory-report.html",From statutory report data categories
+experian,Loan,unsecured_loan,medium,"https://www.experian.co.uk/consumer/statutory-report.html",From statutory report data categories
+experian,Mortgage,mortgage,medium,"https://www.experian.co.uk/consumer/statutory-report.html",From statutory report data categories
+experian,Mobile account,telecom,medium,"https://www.experian.co.uk/consumer/statutory-report.html",Mobile/telecom accounts
+experian,Utility account,utility,medium,"https://www.experian.co.uk/consumer/statutory-report.html",Utilities accounts
+experian,Bank account,current_account,medium,"https://www.experian.co.uk/consumer/statutory-report.html",Current account/overdraft style records
+generic,Insurance policy payment,insurance,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Use when insurer reports regular-payment tradeline
+generic,Hire purchase,other,low,"https://www.transunionstatreport.co.uk/CreditReport/About",Potential future type; keep raw in extensions
+generic,Unknown,other,high,"local:project_spec",Fallback when parser cannot classify

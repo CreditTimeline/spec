@@ -1,0 +1,241 @@
+{
+  "schema_version": "1.0.0",
+  "file_id": "file_2026_02_07_eqf",
+  "subject_id": "subj_01",
+  "created_at": "2026-02-07T20:00:00Z",
+  "imports": [
+    {
+      "import_id": "imp_2026_02_07_eqf",
+      "imported_at": "2026-02-07T19:58:00Z",
+      "source_system": "equifax",
+      "source_wrapper": "statutory_direct",
+      "acquisition_method": "pdf_upload",
+      "mapping_version": "adapter-eqf-0.1.0",
+      "confidence_notes": "Address roles and status codes mapped directly from report labels.",
+      "raw_artifacts": [
+        {
+          "artifact_id": "art_eqf_pdf_01",
+          "artifact_type": "pdf",
+          "sha256": "7a45970e5e2d5b7a21d8f8abed9d0ccf998ca72b1f1df35814f5ca14d987d6a3",
+          "uri": "vault://artifacts/2026/02/eqf-credit-report.pdf"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "subject_id": "subj_01",
+    "names": [
+      {
+        "name_id": "name_legal_01",
+        "full_name": "Robert Stephen Knight",
+        "given_name": "Robert",
+        "middle_name": "Stephen",
+        "family_name": "Knight",
+        "name_type": "legal",
+        "source_import_id": "imp_2026_02_07_eqf"
+      },
+      {
+        "name_id": "name_hist_01",
+        "full_name": "Robert De Canha-Knight",
+        "name_type": "historical",
+        "source_import_id": "imp_2026_02_07_eqf"
+      }
+    ],
+    "dates_of_birth": [
+      {
+        "dob": "1990-06-26",
+        "source_import_id": "imp_2026_02_07_eqf",
+        "confidence": "high"
+      }
+    ],
+    "identifiers": [
+      {
+        "identifier_id": "sid_eqf_ref",
+        "identifier_type": "provider_reference",
+        "value": "20250917023038963415457",
+        "source_import_id": "imp_2026_02_07_eqf"
+      }
+    ]
+  },
+  "organisations": [
+    {
+      "organisation_id": "org_halifax",
+      "name": "Halifax",
+      "roles": [
+        "furnisher"
+      ],
+      "industry_type": "bank",
+      "source_import_id": "imp_2026_02_07_eqf"
+    },
+    {
+      "organisation_id": "org_cra_ltd",
+      "name": "Credit Reporting Agency Ltd",
+      "roles": [
+        "searcher"
+      ],
+      "industry_type": "other",
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "addresses": [
+    {
+      "address_id": "addr_current_01",
+      "line_1": "32 Mitchell Drive",
+      "town_city": "Eastleigh",
+      "county_region": "Hants",
+      "postcode": "SO50 7FU",
+      "country_code": "GB",
+      "normalized_single_line": "32 MITCHELL DRIVE, EASTLEIGH, SO50 7FU"
+    },
+    {
+      "address_id": "addr_prev_01",
+      "line_1": "10 Hargreaves Close",
+      "town_city": "Basingstoke",
+      "county_region": "Hants",
+      "postcode": "RG24 9SS",
+      "country_code": "GB",
+      "normalized_single_line": "10 HARGREAVES CLOSE, BASINGSTOKE, RG24 9SS"
+    }
+  ],
+  "address_associations": [
+    {
+      "association_id": "assoc_01",
+      "address_id": "addr_current_01",
+      "role": "current",
+      "valid_from": "2024-09-01",
+      "source_import_id": "imp_2026_02_07_eqf"
+    },
+    {
+      "association_id": "assoc_02",
+      "address_id": "addr_prev_01",
+      "role": "previous",
+      "valid_to": "2024-09-01",
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "financial_associates": [
+    {
+      "associate_id": "fa_01",
+      "associate_name": "Scott Alan Graham",
+      "relationship_basis": "joint_account",
+      "status": "active",
+      "confirmed_at": "2024-08-31",
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "electoral_roll_entries": [
+    {
+      "electoral_entry_id": "er_01",
+      "address_id": "addr_current_01",
+      "name_on_register": "Robert S Knight",
+      "registered_from": "2024-10-01",
+      "change_type": "added",
+      "marketing_opt_out": true,
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "tradelines": [
+    {
+      "tradeline_id": "tl_halifax_mortgage_01",
+      "furnisher_organisation_id": "org_halifax",
+      "account_type": "mortgage",
+      "opened_at": "2024-08-20",
+      "status_current": "up_to_date",
+      "repayment_frequency": "monthly",
+      "regular_payment_amount": 1634,
+      "identifiers": [
+        {
+          "identifier_id": "tid_01",
+          "identifier_type": "masked_account_number",
+          "value": "XXXXXXXXXXX300P",
+          "source_import_id": "imp_2026_02_07_eqf"
+        }
+      ],
+      "terms": {
+        "terms_id": "terms_01",
+        "term_type": "mortgage",
+        "term_count": 420,
+        "term_payment_amount": 1634,
+        "source_import_id": "imp_2026_02_07_eqf"
+      },
+      "snapshots": [
+        {
+          "snapshot_id": "snap_01",
+          "as_of_date": "2026-01-13",
+          "current_balance": 332511,
+          "opening_balance": 0,
+          "delinquent_balance": 0,
+          "source_import_id": "imp_2026_02_07_eqf"
+        }
+      ],
+      "monthly_metrics": [
+        {
+          "monthly_metric_id": "mm_01",
+          "period": "2025-12",
+          "metric_type": "payment_status",
+          "value_text": "0",
+          "canonical_status": "up_to_date",
+          "raw_status_code": "0",
+          "source_import_id": "imp_2026_02_07_eqf"
+        },
+        {
+          "monthly_metric_id": "mm_02",
+          "period": "2025-12",
+          "metric_type": "balance",
+          "value_numeric": 332511,
+          "source_import_id": "imp_2026_02_07_eqf"
+        }
+      ],
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "searches": [
+    {
+      "search_id": "sr_01",
+      "searched_at": "2026-02-07",
+      "organisation_id": "org_cra_ltd",
+      "search_type": "consumer_enquiry",
+      "visibility": "soft",
+      "joint_application": false,
+      "input_name": "Knight Robert S",
+      "input_dob": "1990-06-26",
+      "input_address_id": "addr_current_01",
+      "reference": "search-ref-123",
+      "purpose_text": "Consumer enquiry",
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "property_records": [
+    {
+      "property_record_id": "prop_01",
+      "address_id": "addr_current_01",
+      "property_type": "Semi-detached",
+      "price_paid": 378000,
+      "deed_date": "2024-08-21",
+      "tenure": "Freehold",
+      "is_new_build": false,
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "attributable_items": [
+    {
+      "attributable_item_id": "att_01",
+      "entity_domain": "tradeline",
+      "summary": "Potential attributable tradeline under similar name",
+      "confidence": "low",
+      "reason": "Similar surname and date of birth at linked address",
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
+  "disputes": [
+    {
+      "dispute_id": "disp_01",
+      "entity_domain": "tradeline",
+      "entity_id": "tl_halifax_mortgage_01",
+      "opened_at": "2026-02-07",
+      "status": "open",
+      "notes": "Customer requested validation of account opening date.",
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ]
+}

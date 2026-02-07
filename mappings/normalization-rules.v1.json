@@ -1,0 +1,206 @@
+{
+  "version": "1.0.0",
+  "description": "Deterministic normalization rules for CreditTimeline v1 adapters",
+  "defaults": {
+    "country_code": "GB",
+    "currency": "GBP",
+    "unknown_search_visibility": "unknown",
+    "unknown_account_type": "other",
+    "unknown_payment_status": "unknown"
+  },
+  "address_role_map": {
+    "equifax": {
+      "current address": "current",
+      "previous address": "previous",
+      "linked address": "linked",
+      "address on agreement": "on_agreement"
+    },
+    "transunion": {
+      "current address": "current",
+      "previous address": "previous",
+      "address links": "linked",
+      "input address": "search_input",
+      "address on agreement": "on_agreement"
+    },
+    "generic": {
+      "default": "other"
+    }
+  },
+  "electoral_change_type_map": {
+    "added at the address": "added",
+    "amended at the address": "amended",
+    "deleted at the address": "deleted",
+    "n/a": "none"
+  },
+  "account_type_map": {
+    "equifax": {
+      "credit card": "credit_card",
+      "budget card / revolving credit": "budget_account",
+      "mortgage": "mortgage",
+      "property rental": "rental",
+      "loan": "unsecured_loan",
+      "current account": "current_account",
+      "communications supplier": "telecom",
+      "utilities agreements": "utility"
+    },
+    "transunion": {
+      "credit card": "credit_card",
+      "mortgage (unspecified type)": "mortgage",
+      "unsecured loan": "unsecured_loan",
+      "current account": "current_account",
+      "telecommunications supplier": "telecom",
+      "utility": "utility",
+      "property rental": "rental",
+      "budget account": "budget_account"
+    },
+    "experian": {
+      "credit card": "credit_card",
+      "loan": "unsecured_loan",
+      "mortgage": "mortgage",
+      "mobile account": "telecom",
+      "utility account": "utility",
+      "bank account": "current_account"
+    }
+  },
+  "account_status_map": {
+    "equifax": {
+      "up to date with payments": "up_to_date",
+      "settled": "settled",
+      "no update received": "no_update",
+      "defaulted": "defaulted",
+      "delinquent": "delinquent"
+    },
+    "transunion": {
+      "up to date": "up_to_date",
+      "settled": "settled",
+      "satisfied": "satisfied",
+      "defaulted": "defaulted",
+      "arrangement to pay": "arrangement",
+      "no update received": "no_update"
+    }
+  },
+  "payment_status_map": {
+    "equifax": {
+      ".": "no_update",
+      "0": "up_to_date",
+      "1": "in_arrears",
+      "2": "in_arrears",
+      "3": "in_arrears",
+      "4": "in_arrears",
+      "5": "in_arrears",
+      "6": "in_arrears",
+      "A": "in_arrears",
+      "B": "in_arrears",
+      "I": "arrangement",
+      "S": "settled",
+      "U": "no_update",
+      "R": "repossession",
+      "D": "default",
+      "Q": "query",
+      "G": "gone_away",
+      "N": "inactive",
+      "Z": "inactive",
+      "V": "repossession",
+      "W": "written_off",
+      "X": "transferred"
+    },
+    "transunion": {
+      "0": "up_to_date",
+      "1": "in_arrears",
+      "2": "in_arrears",
+      "3": "in_arrears",
+      "4": "in_arrears",
+      "5": "in_arrears",
+      "6": "in_arrears",
+      "U": "no_update",
+      "UC": "no_update",
+      "?": "unknown",
+      "S": "settled",
+      "D": "default",
+      "Q": "query",
+      "G": "gone_away"
+    }
+  },
+  "search_type_map": {
+    "equifax": {
+      "credit application": {
+        "search_type": "credit_application",
+        "visibility": "hard"
+      },
+      "debt collection": {
+        "search_type": "debt_collection",
+        "visibility": "hard"
+      },
+      "consumer enquiry": {
+        "search_type": "consumer_enquiry",
+        "visibility": "soft"
+      },
+      "id check to comply with ml regs": {
+        "search_type": "identity_check",
+        "visibility": "soft"
+      },
+      "n/a": {
+        "search_type": "other",
+        "visibility": "unknown"
+      }
+    },
+    "transunion": {
+      "consumer credit file request": {
+        "search_type": "consumer_enquiry",
+        "visibility": "soft"
+      },
+      "quotation search": {
+        "search_type": "quotation",
+        "visibility": "soft"
+      },
+      "identity check for credit": {
+        "search_type": "identity_check",
+        "visibility": "soft"
+      },
+      "checking credit application": {
+        "search_type": "credit_application",
+        "visibility": "hard"
+      },
+      "general insurance": {
+        "search_type": "insurance_quote",
+        "visibility": "soft"
+      },
+      "AF": {
+        "search_type": "credit_application",
+        "visibility": "hard"
+      },
+      "AI": {
+        "search_type": "identity_check",
+        "visibility": "soft"
+      },
+      "AV": {
+        "search_type": "aml",
+        "visibility": "soft"
+      }
+    }
+  },
+  "money_normalization": {
+    "strip_symbols": [
+      "£",
+      ","
+    ],
+    "negative_formats": [
+      "-78"
+    ],
+    "parse_to": "decimal"
+  },
+  "date_normalization": {
+    "accepted_input_formats": [
+      "DD/MM/YYYY",
+      "D MMM YYYY",
+      "MMMM D, YYYY",
+      "YYYY-MM-DD"
+    ],
+    "output_format": "YYYY-MM-DD"
+  },
+  "notes": [
+    "Always preserve raw source values in extensions when confidence is below high.",
+    "Do not drop records solely because organization normalization fails; keep organisation_name_raw.",
+    "When search type is unknown, set search_type=other and preserve purpose_text."
+  ]
+}

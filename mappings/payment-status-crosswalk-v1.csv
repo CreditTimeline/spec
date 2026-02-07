@@ -1,0 +1,37 @@
+source_system,raw_code,scope,raw_description,canonical_status,event_type,severity_rank,confidence,source_refs,notes
+equifax,.,monthly_payment_status,No update received,no_update,,0,high,"local:Equifax_2026-02-07",From Equifax Appendix A code description
+equifax,0,monthly_payment_status,Up to date with payments,up_to_date,,1,high,"local:Equifax_2026-02-07",Baseline good standing
+equifax,1,monthly_payment_status,1 payment in arrears,in_arrears,,2,high,"local:Equifax_2026-02-07",Arrears month count = 1
+equifax,2,monthly_payment_status,2 payments in arrears,in_arrears,,3,high,"local:Equifax_2026-02-07",Arrears month count = 2
+equifax,3,monthly_payment_status,3 payments in arrears,in_arrears,,4,high,"local:Equifax_2026-02-07",Arrears month count = 3
+equifax,4,monthly_payment_status,4 payments in arrears,in_arrears,,5,high,"local:Equifax_2026-02-07",Arrears month count = 4
+equifax,5,monthly_payment_status,5 payments in arrears,in_arrears,,6,high,"local:Equifax_2026-02-07",Arrears month count = 5
+equifax,6,monthly_payment_status,6 or more payments in arrears,in_arrears,,7,high,"local:Equifax_2026-02-07",Arrears month count >= 6
+equifax,A,monthly_payment_status,Moderate arrears,in_arrears,,5,high,"local:Equifax_2026-02-07",Legacy non-numeric arrears code
+equifax,B,monthly_payment_status,Bad arrears,in_arrears,,6,high,"local:Equifax_2026-02-07",Legacy non-numeric arrears code
+equifax,I,monthly_payment_status,Arrangement to pay,arrangement,arrangement_to_pay,5,high,"local:Equifax_2026-02-07",May also emit tradeline_event
+equifax,S,monthly_payment_status,Settled or Satisfied,settled,settled,1,high,"local:Equifax_2026-02-07",Commonly in closed-account tail months
+equifax,U,monthly_payment_status,No payment due yet or unclassified,no_update,,0,high,"local:Equifax_2026-02-07",Preserve raw code for auditing
+equifax,R,monthly_payment_status,Repossession,repossession,repossession,8,high,"local:Equifax_2026-02-07",High-severity adverse marker
+equifax,D,monthly_payment_status,Default,default,default,9,high,"local:Equifax_2026-02-07",High-severity adverse marker
+equifax,Q,monthly_payment_status,Query (account under review),query,query,3,high,"local:Equifax_2026-02-07",Keep open dispute correlation
+equifax,G,monthly_payment_status,Gone away,gone_away,gone_away,6,high,"local:Equifax_2026-02-07",Can correlate with GAIN domain
+equifax,N,monthly_payment_status,Inactive,inactive,,0,high,"local:Equifax_2026-02-07",Non-adverse dormant state
+equifax,Z,monthly_payment_status,Never taken up,inactive,,0,high,"local:Equifax_2026-02-07",Treat as inactive/not-started
+equifax,V,monthly_payment_status,Goods voluntarily surrendered,repossession,repossession,8,high,"local:Equifax_2026-02-07",Repossession-family outcome
+equifax,W,monthly_payment_status,Written off,written_off,written_off,9,high,"local:Equifax_2026-02-07",Charge-off/write-off treatment
+equifax,X,monthly_payment_status,Transfer,transferred,,1,high,"local:Equifax_2026-02-07",Account transferred/sold
+transunion,0,monthly_payment_status,Up to date,up_to_date,,1,high,"local:TransUnion_2026-02-07",Seen in status history examples
+transunion,1,monthly_payment_status,1 payment in arrears,in_arrears,,2,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Not present in sample but expected by CRA conventions
+transunion,2,monthly_payment_status,2 payments in arrears,in_arrears,,3,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Not present in sample but expected by CRA conventions
+transunion,3,monthly_payment_status,3 payments in arrears,in_arrears,,4,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Not present in sample but expected by CRA conventions
+transunion,4,monthly_payment_status,4 payments in arrears,in_arrears,,5,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Not present in sample but expected by CRA conventions
+transunion,5,monthly_payment_status,5 payments in arrears,in_arrears,,6,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Not present in sample but expected by CRA conventions
+transunion,6,monthly_payment_status,6+ payments in arrears,in_arrears,,7,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Not present in sample but expected by CRA conventions
+transunion,U,monthly_payment_status,Unclassified/no payment due,no_update,,0,high,"local:TransUnion_2026-02-07",Seen in historical rows as U/UC family
+transunion,UC,monthly_payment_status,Unclassified or no update,no_update,,0,high,"local:TransUnion_2026-02-07",Observed in status history rows
+transunion,?,monthly_payment_status,Unknown/insufficient data,unknown,,0,high,"local:TransUnion_2026-02-07",Observed in utility history rows
+transunion,D,monthly_payment_status,Default,default,default,9,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Listed in payment status value examples
+transunion,S,monthly_payment_status,Settled/satisfied,settled,settled,1,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",May appear for closed accounts
+transunion,Q,monthly_payment_status,Query/account under review,query,query,3,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Potentially present in payment status values
+transunion,G,monthly_payment_status,Gone away,gone_away,gone_away,6,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Potentially present in payment status values

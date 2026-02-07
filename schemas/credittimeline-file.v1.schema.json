@@ -1,0 +1,1511 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://credittimeline.dev/schemas/credittimeline-file.v1.schema.json",
+  "title": "CreditTimeline Canonical Credit File v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "file_id",
+    "subject_id",
+    "created_at",
+    "imports",
+    "subject"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "file_id": {
+      "$ref": "#/$defs/id"
+    },
+    "subject_id": {
+      "$ref": "#/$defs/id"
+    },
+    "created_at": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "imports": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/importBatch"
+      }
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "organisations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/organisation"
+      }
+    },
+    "addresses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/address"
+      }
+    },
+    "address_associations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/addressAssociation"
+      }
+    },
+    "address_links": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/addressLink"
+      }
+    },
+    "financial_associates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/financialAssociate"
+      }
+    },
+    "electoral_roll_entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/electoralRollEntry"
+      }
+    },
+    "tradelines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tradeline"
+      }
+    },
+    "searches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/searchRecord"
+      }
+    },
+    "public_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/publicRecord"
+      }
+    },
+    "notices_of_correction": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/noticeOfCorrection"
+      }
+    },
+    "property_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/propertyRecord"
+      }
+    },
+    "gone_away_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/goneAwayRecord"
+      }
+    },
+    "fraud_markers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fraudMarker"
+      }
+    },
+    "attributable_items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/attributableItem"
+      }
+    },
+    "disputes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dispute"
+      }
+    },
+    "generated_insights": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/generatedInsight"
+      }
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "extensions": {
+      "type": "object",
+      "default": {},
+      "additionalProperties": true
+    },
+    "rawArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "sha256"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/id"
+        },
+        "artifact_type": {
+          "type": "string",
+          "enum": [
+            "pdf",
+            "html",
+            "json",
+            "image",
+            "text",
+            "other"
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "embedded_base64": {
+          "type": "string"
+        },
+        "extracted_text_ref": {
+          "type": "string"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "importBatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "import_id",
+        "imported_at",
+        "source_system",
+        "acquisition_method",
+        "mapping_version"
+      ],
+      "properties": {
+        "import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "imported_at": {
+          "$ref": "#/$defs/dateTime"
+        },
+        "source_system": {
+          "type": "string",
+          "enum": [
+            "equifax",
+            "transunion",
+            "experian",
+            "other"
+          ]
+        },
+        "source_wrapper": {
+          "type": "string"
+        },
+        "acquisition_method": {
+          "type": "string",
+          "enum": [
+            "pdf_upload",
+            "html_scrape",
+            "api",
+            "image",
+            "other"
+          ]
+        },
+        "mapping_version": {
+          "type": "string"
+        },
+        "confidence_notes": {
+          "type": "string"
+        },
+        "raw_artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rawArtifact"
+          }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "dateOfBirthRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dob",
+        "source_import_id"
+      ],
+      "properties": {
+        "dob": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "subjectIdentifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier_id",
+        "identifier_type",
+        "value",
+        "source_import_id"
+      ],
+      "properties": {
+        "identifier_id": {
+          "$ref": "#/$defs/id"
+        },
+        "identifier_type": {
+          "type": "string",
+          "enum": [
+            "provider_reference",
+            "application_reference",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "personName": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name_id",
+        "full_name",
+        "name_type",
+        "source_import_id"
+      ],
+      "properties": {
+        "name_id": {
+          "$ref": "#/$defs/id"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "given_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "family_name": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "name_type": {
+          "type": "string",
+          "enum": [
+            "legal",
+            "alias",
+            "historical",
+            "other"
+          ]
+        },
+        "valid_from": {
+          "$ref": "#/$defs/date"
+        },
+        "valid_to": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id"
+      ],
+      "properties": {
+        "subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/personName"
+          }
+        },
+        "dates_of_birth": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dateOfBirthRecord"
+          }
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/subjectIdentifier"
+          }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "address": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address_id",
+        "normalized_single_line",
+        "country_code"
+      ],
+      "properties": {
+        "address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "line_1": {
+          "type": "string"
+        },
+        "line_2": {
+          "type": "string"
+        },
+        "line_3": {
+          "type": "string"
+        },
+        "town_city": {
+          "type": "string"
+        },
+        "county_region": {
+          "type": "string"
+        },
+        "postcode": {
+          "type": "string"
+        },
+        "country_code": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2
+        },
+        "normalized_single_line": {
+          "type": "string"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "addressAssociation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "association_id",
+        "address_id",
+        "role",
+        "source_import_id"
+      ],
+      "properties": {
+        "association_id": {
+          "$ref": "#/$defs/id"
+        },
+        "address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "current",
+            "previous",
+            "linked",
+            "on_agreement",
+            "search_input",
+            "other"
+          ]
+        },
+        "valid_from": {
+          "$ref": "#/$defs/date"
+        },
+        "valid_to": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "addressLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address_link_id",
+        "from_address_id",
+        "to_address_id",
+        "source_import_id"
+      ],
+      "properties": {
+        "address_link_id": {
+          "$ref": "#/$defs/id"
+        },
+        "from_address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "to_address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_organisation_name": {
+          "type": "string"
+        },
+        "last_confirmed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "financialAssociate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "associate_id",
+        "associate_name",
+        "source_import_id"
+      ],
+      "properties": {
+        "associate_id": {
+          "$ref": "#/$defs/id"
+        },
+        "associate_name": {
+          "type": "string"
+        },
+        "relationship_basis": {
+          "type": "string",
+          "enum": [
+            "joint_account",
+            "joint_application",
+            "other"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "disputed",
+            "removed",
+            "unknown"
+          ]
+        },
+        "confirmed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "electoralRollEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "electoral_entry_id",
+        "address_id",
+        "source_import_id"
+      ],
+      "properties": {
+        "electoral_entry_id": {
+          "$ref": "#/$defs/id"
+        },
+        "address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "name_on_register": {
+          "type": "string"
+        },
+        "registered_from": {
+          "$ref": "#/$defs/date"
+        },
+        "registered_to": {
+          "$ref": "#/$defs/date"
+        },
+        "change_type": {
+          "type": "string",
+          "enum": [
+            "added",
+            "amended",
+            "deleted",
+            "none",
+            "unknown"
+          ]
+        },
+        "marketing_opt_out": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "organisation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "organisation_id",
+        "name"
+      ],
+      "properties": {
+        "organisation_id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "furnisher",
+              "searcher",
+              "court_source",
+              "fraud_agency",
+              "other"
+            ]
+          }
+        },
+        "industry_type": {
+          "type": "string",
+          "enum": [
+            "bank",
+            "telecom",
+            "utility",
+            "insurer",
+            "landlord",
+            "government",
+            "other"
+          ]
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "tradelineIdentifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier_id",
+        "identifier_type",
+        "value",
+        "source_import_id"
+      ],
+      "properties": {
+        "identifier_id": {
+          "$ref": "#/$defs/id"
+        },
+        "identifier_type": {
+          "type": "string",
+          "enum": [
+            "masked_account_number",
+            "provider_reference",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "tradelineParty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "party_id",
+        "party_role",
+        "source_import_id"
+      ],
+      "properties": {
+        "party_id": {
+          "$ref": "#/$defs/id"
+        },
+        "party_role": {
+          "type": "string",
+          "enum": [
+            "primary",
+            "secondary",
+            "joint",
+            "guarantor",
+            "other"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "tradelineTerms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terms_id",
+        "source_import_id"
+      ],
+      "properties": {
+        "terms_id": {
+          "$ref": "#/$defs/id"
+        },
+        "term_type": {
+          "type": "string",
+          "enum": [
+            "revolving",
+            "installment",
+            "mortgage",
+            "rental",
+            "other"
+          ]
+        },
+        "term_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "term_payment_amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "payment_start_date": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "tradelineSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_id",
+        "source_import_id"
+      ],
+      "properties": {
+        "snapshot_id": {
+          "$ref": "#/$defs/id"
+        },
+        "as_of_date": {
+          "$ref": "#/$defs/date"
+        },
+        "current_balance": {
+          "$ref": "#/$defs/amount"
+        },
+        "opening_balance": {
+          "$ref": "#/$defs/amount"
+        },
+        "credit_limit": {
+          "$ref": "#/$defs/amount"
+        },
+        "delinquent_balance": {
+          "$ref": "#/$defs/amount"
+        },
+        "payment_amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "statement_balance": {
+          "$ref": "#/$defs/amount"
+        },
+        "minimum_payment_received": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "cash_advance_amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "cash_advance_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "credit_limit_change": {
+          "type": "string"
+        },
+        "promotional_rate_flag": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "tradelineMonthlyMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "monthly_metric_id",
+        "period",
+        "metric_type",
+        "source_import_id"
+      ],
+      "properties": {
+        "monthly_metric_id": {
+          "$ref": "#/$defs/id"
+        },
+        "period": {
+          "$ref": "#/$defs/month"
+        },
+        "metric_type": {
+          "type": "string",
+          "enum": [
+            "payment_status",
+            "balance",
+            "credit_limit",
+            "statement_balance",
+            "payment_amount",
+            "other"
+          ]
+        },
+        "value_numeric": {
+          "$ref": "#/$defs/amount"
+        },
+        "value_text": {
+          "type": "string"
+        },
+        "canonical_status": {
+          "type": "string",
+          "enum": [
+            "up_to_date",
+            "in_arrears",
+            "arrangement",
+            "settled",
+            "default",
+            "query",
+            "gone_away",
+            "no_update",
+            "inactive",
+            "written_off",
+            "transferred",
+            "repossession",
+            "unknown"
+          ]
+        },
+        "raw_status_code": {
+          "type": "string"
+        },
+        "reported_at": {
+          "$ref": "#/$defs/date"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "value_numeric"
+          ]
+        },
+        {
+          "required": [
+            "value_text"
+          ]
+        },
+        {
+          "required": [
+            "raw_status_code"
+          ]
+        }
+      ]
+    },
+    "tradelineEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "event_type",
+        "event_date",
+        "source_import_id"
+      ],
+      "properties": {
+        "event_id": {
+          "$ref": "#/$defs/id"
+        },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "default",
+            "delinquency",
+            "satisfied",
+            "settled",
+            "arrangement_to_pay",
+            "query",
+            "gone_away",
+            "written_off",
+            "repossession",
+            "other"
+          ]
+        },
+        "event_date": {
+          "$ref": "#/$defs/date"
+        },
+        "amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "tradeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tradeline_id",
+        "account_type",
+        "source_import_id"
+      ],
+      "properties": {
+        "tradeline_id": {
+          "$ref": "#/$defs/id"
+        },
+        "furnisher_organisation_id": {
+          "$ref": "#/$defs/id"
+        },
+        "furnisher_name_raw": {
+          "type": "string"
+        },
+        "account_type": {
+          "type": "string",
+          "enum": [
+            "credit_card",
+            "mortgage",
+            "unsecured_loan",
+            "current_account",
+            "telecom",
+            "utility",
+            "rental",
+            "budget_account",
+            "insurance",
+            "other"
+          ]
+        },
+        "opened_at": {
+          "$ref": "#/$defs/date"
+        },
+        "closed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "status_current": {
+          "type": "string"
+        },
+        "repayment_frequency": {
+          "type": "string"
+        },
+        "regular_payment_amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "supplementary_info": {
+          "type": "string"
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradelineIdentifier"
+          }
+        },
+        "parties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradelineParty"
+          }
+        },
+        "terms": {
+          "$ref": "#/$defs/tradelineTerms"
+        },
+        "snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradelineSnapshot"
+          }
+        },
+        "monthly_metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradelineMonthlyMetric"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradelineEvent"
+          }
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "furnisher_organisation_id"
+          ]
+        },
+        {
+          "required": [
+            "furnisher_name_raw"
+          ]
+        }
+      ]
+    },
+    "searchRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "search_id",
+        "searched_at",
+        "search_type",
+        "source_import_id"
+      ],
+      "properties": {
+        "search_id": {
+          "$ref": "#/$defs/id"
+        },
+        "searched_at": {
+          "$ref": "#/$defs/date"
+        },
+        "organisation_id": {
+          "$ref": "#/$defs/id"
+        },
+        "organisation_name_raw": {
+          "type": "string"
+        },
+        "search_type": {
+          "type": "string",
+          "enum": [
+            "credit_application",
+            "debt_collection",
+            "quotation",
+            "identity_check",
+            "consumer_enquiry",
+            "aml",
+            "insurance_quote",
+            "other"
+          ]
+        },
+        "visibility": {
+          "type": "string",
+          "enum": [
+            "hard",
+            "soft",
+            "unknown"
+          ]
+        },
+        "joint_application": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "input_name": {
+          "type": "string"
+        },
+        "input_dob": {
+          "$ref": "#/$defs/date"
+        },
+        "input_address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "purpose_text": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "organisation_id"
+          ]
+        },
+        {
+          "required": [
+            "organisation_name_raw"
+          ]
+        }
+      ]
+    },
+    "publicRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_record_id",
+        "record_type",
+        "source_import_id"
+      ],
+      "properties": {
+        "public_record_id": {
+          "$ref": "#/$defs/id"
+        },
+        "record_type": {
+          "type": "string",
+          "enum": [
+            "ccj",
+            "judgment",
+            "bankruptcy",
+            "iva",
+            "dro",
+            "administration_order",
+            "other"
+          ]
+        },
+        "court_or_register": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/amount"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/date"
+        },
+        "satisfied_at": {
+          "$ref": "#/$defs/date"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "satisfied",
+            "set_aside",
+            "discharged",
+            "unknown"
+          ]
+        },
+        "address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "noticeOfCorrection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notice_id",
+        "text",
+        "source_import_id"
+      ],
+      "properties": {
+        "notice_id": {
+          "$ref": "#/$defs/id"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "created_at": {
+          "$ref": "#/$defs/date"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/date"
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "file",
+            "address",
+            "entity"
+          ]
+        },
+        "scope_entity_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "propertyRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "property_record_id",
+        "address_id",
+        "source_import_id"
+      ],
+      "properties": {
+        "property_record_id": {
+          "$ref": "#/$defs/id"
+        },
+        "address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "property_type": {
+          "type": "string"
+        },
+        "price_paid": {
+          "$ref": "#/$defs/amount"
+        },
+        "deed_date": {
+          "$ref": "#/$defs/date"
+        },
+        "tenure": {
+          "type": "string"
+        },
+        "is_new_build": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "goneAwayRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gone_away_id",
+        "network",
+        "source_import_id"
+      ],
+      "properties": {
+        "gone_away_id": {
+          "$ref": "#/$defs/id"
+        },
+        "network": {
+          "type": "string"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/date"
+        },
+        "old_address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "new_address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "fraudMarker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fraud_marker_id",
+        "scheme",
+        "marker_type",
+        "source_import_id"
+      ],
+      "properties": {
+        "fraud_marker_id": {
+          "$ref": "#/$defs/id"
+        },
+        "scheme": {
+          "type": "string",
+          "enum": [
+            "cifas",
+            "other"
+          ]
+        },
+        "marker_type": {
+          "type": "string",
+          "enum": [
+            "protective_registration",
+            "victim_of_impersonation",
+            "other"
+          ]
+        },
+        "placed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/date"
+        },
+        "address_scope": {
+          "type": "string",
+          "enum": [
+            "current",
+            "previous",
+            "linked",
+            "file",
+            "unknown"
+          ]
+        },
+        "address_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "attributableItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attributable_item_id",
+        "entity_domain",
+        "summary",
+        "confidence",
+        "source_import_id"
+      ],
+      "properties": {
+        "attributable_item_id": {
+          "$ref": "#/$defs/id"
+        },
+        "entity_domain": {
+          "type": "string",
+          "enum": [
+            "tradeline",
+            "search",
+            "address",
+            "public_record",
+            "fraud_marker",
+            "other"
+          ]
+        },
+        "linked_entity_id": {
+          "$ref": "#/$defs/id"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "dispute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dispute_id",
+        "entity_domain",
+        "status",
+        "source_import_id"
+      ],
+      "properties": {
+        "dispute_id": {
+          "$ref": "#/$defs/id"
+        },
+        "entity_domain": {
+          "type": "string",
+          "enum": [
+            "tradeline",
+            "search",
+            "address",
+            "public_record",
+            "fraud_marker",
+            "other"
+          ]
+        },
+        "entity_id": {
+          "$ref": "#/$defs/id"
+        },
+        "opened_at": {
+          "$ref": "#/$defs/date"
+        },
+        "closed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "under_review",
+            "resolved",
+            "rejected",
+            "withdrawn"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "generatedInsight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "insight_id",
+        "kind",
+        "generated_at"
+      ],
+      "properties": {
+        "insight_id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "linked_entity_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "generated_at": {
+          "$ref": "#/$defs/dateTime"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+source_system,raw_search_value,raw_code,canonical_search_type,canonical_visibility,joint_application_supported,confidence,source_refs,notes
+equifax,Credit Application,,credit_application,hard,yes,high,"local:Equifax_2026-02-07",Appears under Hard Searches
+equifax,Debt Collection,,debt_collection,hard,yes,high,"local:Equifax_2026-02-07",Hard-search class by Equifax definition
+equifax,Consumer Enquiry,,consumer_enquiry,soft,yes,high,"local:Equifax_2026-02-07",Appears under Soft Searches
+equifax,ID Check To Comply With ML Regs,,identity_check,soft,yes,high,"local:Equifax_2026-02-07",Identity/AML verification soft search
+equifax,N/A,,other,unknown,yes,high,"local:Equifax_2026-02-07",Unknown/blank search type from provider rows
+transunion,Consumer Credit File Request,,consumer_enquiry,soft,yes,high,"local:TransUnion_2026-02-07",Common self-check/API pull footprint
+transunion,Quotation Search,,quotation,soft,yes,high,"local:TransUnion_2026-02-07",Rate/eligibility quote check
+transunion,Identity Check for Credit,,identity_check,soft,yes,high,"local:TransUnion_2026-02-07",Identity verification check
+transunion,Checking Credit Application,,credit_application,hard,yes,medium,"local:TransUnion_2026-02-07",Treat as application-like footprint unless provider contradicts
+transunion,General Insurance,,insurance_quote,soft,yes,high,"local:TransUnion_2026-02-07",Insurance quotation check
+transunion,Application for finance,AF,credit_application,hard,yes,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Derived from SHARE code list
+transunion,ID verification,AI,identity_check,soft,yes,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Derived from SHARE code list
+transunion,Account management,AM,other,soft,yes,low,"https://www.transunionstatreport.co.uk/CreditReport/About","Operational review/search, usually soft"
+transunion,Account review,AR,other,soft,yes,low,"https://www.transunionstatreport.co.uk/CreditReport/About","Operational review/search, usually soft"
+transunion,Anti-money-laundering check,AV,aml,soft,yes,low,"https://www.transunionstatreport.co.uk/CreditReport/About",Map to AML when explicit
+transunion,Authentication check,AX,identity_check,soft,yes,low,"https://www.transunionstatreport.co.uk/CreditReport/About",Fallback identity-type check
+transunion,Associate link search,,quotation,soft,yes,medium,"local:TransUnion_2026-02-07",Use extensions.associate_link_search=true
+generic,Manual review,,other,unknown,yes,medium,"local:project_spec",Fallback for unmapped search descriptors

@@ -1,0 +1,16 @@
+source_system,raw_account_status,canonical_status_current,is_closed,adverse_flag,confidence,source_refs,notes
+equifax,Up to date with payments,up_to_date,false,false,high,"local:Equifax_2026-02-07",Primary active-good state
+equifax,Settled,settled,true,false,high,"local:Equifax_2026-02-07",Closed and satisfied state
+equifax,No update received,no_update,false,false,high,"local:Equifax_2026-02-07",Active account without recent reporting
+equifax,Defaulted,defaulted,false,true,medium,"https://www.equifax.co.uk/resources/loans-and-credit/credit-score-uk.html",Use when status text explicitly indicates default
+equifax,Delinquent,delinquent,false,true,medium,"https://developer.equifax.co.uk/products/apiproducts/credit-insights-development-guide/resources/appendix-data-types",May be inferred from delinquent balance and status code
+transunion,Up to date,up_to_date,false,false,high,"local:TransUnion_2026-02-07",Primary active-good state in account summary
+transunion,Settled,settled,true,false,high,"local:TransUnion_2026-02-07",Closed account status
+transunion,Satisfied,satisfied,true,false,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Can appear for defaulted accounts that are repaid
+transunion,Defaulted,defaulted,false,true,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Adverse account state
+transunion,Arrangement to pay,arrangement,false,true,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Use when provider gives arrangement status
+transunion,No update received,no_update,false,false,medium,"https://www.transunionstatreport.co.uk/CreditReport/About",Equivalent to no recent update states
+transunion,UC,no_update,false,false,high,"local:TransUnion_2026-02-07",Observed in monthly markers; keep raw in metrics
+generic,Written off,written_off,true,true,medium,"local:Equifax_2026-02-07",May be represented via payment status W and/or account status text
+generic,Query under review,query,false,false,medium,"local:Equifax_2026-02-07",Map to query for active dispute/review context
+generic,Gone away,gone_away,false,true,medium,"local:Equifax_2026-02-07",Use if explicitly shown in account status
