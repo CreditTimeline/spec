@@ -114,7 +114,6 @@ docker run --rm \
   -t sqlite-xerial \
   -db /db/credittimeline-v1.db \
   -s main \
-  -o /output \
   -vizjs
 
 VALIDATION_LINK_NOTE="Validation summary not bundled in this artifact."
