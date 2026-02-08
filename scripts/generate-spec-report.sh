@@ -50,6 +50,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Convert OUT_DIR to absolute path if relative (required for Docker volume mounts)
+if [[ "$OUT_DIR" != /* ]]; then
+  OUT_DIR="$(pwd)/$OUT_DIR"
+fi
+
 require_command() {
   local cmd="$1"
   if ! command -v "$cmd" >/dev/null 2>&1; then
