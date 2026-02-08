@@ -51,6 +51,16 @@ jobs:
             --out-dir artifacts/visual \
             --validation-report-dir artifacts/validation
 
+      - name: Build documentation site
+        id: site
+        if: always()
+        continue-on-error: true
+        run: |
+          bash scripts/build-site.sh \
+            artifacts/site \
+            artifacts/visual \
+            artifacts/validation
+
       - name: Publish run summary
         if: always()
         run: |
@@ -96,6 +106,14 @@ jobs:
         with:
           name: spec-visual-report
           path: artifacts/visual
+          if-no-files-found: warn
+
+      - name: Upload site artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-documentation-site
+          path: artifacts/site
           if-no-files-found: warn
 
       - name: Fail job if validation/report generation failed

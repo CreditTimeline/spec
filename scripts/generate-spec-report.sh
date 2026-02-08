@@ -118,9 +118,10 @@ curl -fsSL -o "$DRIVERS_DIR/sqlite-jdbc.jar" \
   "https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/${SQLITE_DRIVER_VERSION}/sqlite-jdbc-${SQLITE_DRIVER_VERSION}.jar"
 
 docker run --rm \
-  -v "$TMP_DIR:/db" \
+  --user "$(id -u):$(id -g)" \
+  -v "$TMP_DIR:/db:ro" \
   -v "$SQLITE_DOC_DIR:/output" \
-  -v "$DRIVERS_DIR:/drivers" \
+  -v "$DRIVERS_DIR:/drivers:ro" \
   schemaspy/schemaspy:latest \
   -t sqlite-xerial \
   -db /db/credittimeline-v1.db \
