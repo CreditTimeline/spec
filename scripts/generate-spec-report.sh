@@ -66,6 +66,7 @@ require_command() {
 require_command "generate-schema-doc"
 require_command "sqlite3"
 require_command "docker"
+require_command "curl"
 
 GENERATED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
@@ -107,13 +108,21 @@ run_generate_schema_doc "$ENUMS_FILE" "$SCHEMA_DOC_DIR/credittimeline-v1-enums.h
 
 sqlite3 "$SQLITE_DB" ".read \"$SQL_FILE\""
 
+# Download SQLite JDBC driver (not included in schemaspy Docker image)
+SQLITE_DRIVER_VERSION="3.45.1.0"
+SQLITE_DRIVER_JAR="$TMP_DIR/sqlite-jdbc-${SQLITE_DRIVER_VERSION}.jar"
+curl -fsSL -o "$SQLITE_DRIVER_JAR" \
+  "https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/${SQLITE_DRIVER_VERSION}/sqlite-jdbc-${SQLITE_DRIVER_VERSION}.jar"
+
 docker run --rm \
   -v "$TMP_DIR:/db" \
   -v "$SQLITE_DOC_DIR:/output" \
+  -v "$SQLITE_DRIVER_JAR:/drivers/sqlite-jdbc.jar" \
   schemaspy/schemaspy:latest \
   -t sqlite-xerial \
   -db /db/credittimeline-v1.db \
   -s main \
+  -cat % \
   -sso \
   -vizjs
 
