@@ -27,12 +27,14 @@ Most fact tables include:
 - `extensions_json`
 
 `source_system` is denormalized for faster filtering across agencies.
+`import_batch.acquisition_method` is required, and `tradeline` rows require both `source_import_id` and `source_system` for lineage integrity.
 
 ### 3.2 Unified Monthly Metrics
 Instead of multiple monthly tables, v1 uses one:
 - `tradeline_monthly_metric`
 
 This avoids schema churn when new monthly series types appear.
+Ingest derives `metric_value_key` as deterministic storage metadata for dedupe and unique constraints.
 
 ### 3.3 Raw + Canonical
 Key tables preserve both normalized and source-specific values:
@@ -42,9 +44,13 @@ Key tables preserve both normalized and source-specific values:
 ### 3.4 Extension Columns
 `extensions_json` (TEXT JSON) is included on major tables to support future fields without migration pressure.
 
+### 3.5 Monetary Values
+All monetary amounts are stored as integers in minor units (pence for GBP). Currency defaults to GBP and can be overridden per import with `currency_code`.
+
 ## 4. Core Table Groups
 
 ### 4.1 Provenance
+- `schema_version`
 - `subject`
 - `credit_file`
 - `import_batch`
@@ -71,6 +77,7 @@ Key tables preserve both normalized and source-specific values:
 
 ### 4.4 Other Domains
 - `search_record`
+- `credit_score`
 - `public_record`
 - `notice_of_correction`
 - `property_record`
@@ -84,8 +91,8 @@ Key tables preserve both normalized and source-specific values:
 - `subject`: `subject_id`
 - `address`: normalized full key (`normalized_single_line`, `postcode`, `country_code`)
 - `organisation`: normalized name + source system
-- `tradeline`: stable account fingerprint (furnisher + best identifier hash)
-- `tradeline_monthly_metric`: unique by (`tradeline_id`, `period`, `metric_type`, `source_import_id`, `raw_status_code`, `value_numeric`, `value_text`)
+- `tradeline`: prefer `canonical_id` when provided; otherwise use a stable fingerprint (furnisher + best identifier hash)
+- `tradeline_monthly_metric`: unique by (`tradeline_id`, `period`, `metric_type`, `source_import_id`, `metric_value_key`)
 - `search_record`: dedupe by (`searched_at`, `organisation_name_raw`, `search_type`, `reference`, `source_import_id`)
 
 ## 6. Important Indexes
@@ -105,3 +112,4 @@ Included indexes focus on core user queries:
 - Keep v1 schema additive when possible.
 - Put low-confidence/rare fields in `extensions_json` first.
 - Promote heavily-used extension fields to first-class columns in a future minor schema release.
+- Track applied migrations in `schema_version`.

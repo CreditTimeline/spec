@@ -9,6 +9,7 @@ Specification repository for CreditTimeline v1.
 - Provider mapping notes (Equifax/TransUnion): `docs/provider-field-mapping-notes.md`
 - Provider crosswalk usage guide: `docs/provider-crosswalk-matrix.md`
 - Machine-readable JSON Schema: `schemas/credittimeline-file.v1.schema.json`
+- Shared enum definitions: `schemas/credittimeline-v1-enums.json`
 - SQLite DDL reference schema: `sql/credittimeline-v1.sql`
 - Example canonical payload: `examples/credittimeline-file.v1.example.json`
 - Crosswalk matrices:
@@ -21,6 +22,22 @@ Specification repository for CreditTimeline v1.
 
 ## Scope
 These v1 specs are designed for personal credit-report data vaulting and longitudinal comparison across imports and credit reference agencies.
+
+## Validation and Reports
+- Run strict local validation:
+  - `bash scripts/validate-spec.sh --strict --report-dir artifacts/validation`
+- Generate a static visual walkthrough artifact:
+  - `bash scripts/generate-spec-report.sh --out-dir artifacts/visual --validation-report-dir artifacts/validation`
+- Validation output files:
+  - `artifacts/validation/validation-report.json`
+  - `artifacts/validation/validation-summary.md`
+
+## CI Workflows
+- `spec-validation.yml`
+  - Runs strict validation and visual report generation on PRs, pushes to `main`, and manual dispatch.
+  - Uploads `spec-validation-report` and `spec-visual-report` artifacts.
+- `docs-link-check.yml`
+  - Runs scheduled/manual link checking for `README.md` and `docs/**/*.md`.
 
 ## Versioning
 - Current schema line: `1.x`

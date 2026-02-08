@@ -3,10 +3,12 @@
   "file_id": "file_2026_02_07_eqf",
   "subject_id": "subj_01",
   "created_at": "2026-02-07T20:00:00Z",
+  "currency_code": "GBP",
   "imports": [
     {
       "import_id": "imp_2026_02_07_eqf",
       "imported_at": "2026-02-07T19:58:00Z",
+      "currency_code": "GBP",
       "source_system": "equifax",
       "source_wrapper": "statutory_direct",
       "acquisition_method": "pdf_upload",
@@ -137,12 +139,13 @@
   "tradelines": [
     {
       "tradeline_id": "tl_halifax_mortgage_01",
+      "canonical_id": "canon_halifax_mortgage_01",
       "furnisher_organisation_id": "org_halifax",
       "account_type": "mortgage",
       "opened_at": "2024-08-20",
       "status_current": "up_to_date",
       "repayment_frequency": "monthly",
-      "regular_payment_amount": 1634,
+      "regular_payment_amount": 163400,
       "identifiers": [
         {
           "identifier_id": "tid_01",
@@ -155,14 +158,16 @@
         "terms_id": "terms_01",
         "term_type": "mortgage",
         "term_count": 420,
-        "term_payment_amount": 1634,
+        "term_payment_amount": 163400,
         "source_import_id": "imp_2026_02_07_eqf"
       },
       "snapshots": [
         {
           "snapshot_id": "snap_01",
           "as_of_date": "2026-01-13",
-          "current_balance": 332511,
+          "status_current": "active",
+          "source_account_ref": "XXXXXXXXXXX300P",
+          "current_balance": 33251100,
           "opening_balance": 0,
           "delinquent_balance": 0,
           "source_import_id": "imp_2026_02_07_eqf"
@@ -182,7 +187,7 @@
           "monthly_metric_id": "mm_02",
           "period": "2025-12",
           "metric_type": "balance",
-          "value_numeric": 332511,
+          "value_numeric": 33251100,
           "source_import_id": "imp_2026_02_07_eqf"
         }
       ],
@@ -205,12 +210,29 @@
       "source_import_id": "imp_2026_02_07_eqf"
     }
   ],
+  "credit_scores": [
+    {
+      "score_id": "score_eqf_01",
+      "score_type": "credit_score",
+      "score_name": "Equifax Credit Score",
+      "score_value": 720,
+      "score_min": 0,
+      "score_max": 1000,
+      "score_band": "Good",
+      "calculated_at": "2026-02-07",
+      "score_factors": [
+        "Long credit history",
+        "Low utilization"
+      ],
+      "source_import_id": "imp_2026_02_07_eqf"
+    }
+  ],
   "property_records": [
     {
       "property_record_id": "prop_01",
       "address_id": "addr_current_01",
       "property_type": "Semi-detached",
-      "price_paid": 378000,
+      "price_paid": 37800000,
       "deed_date": "2024-08-21",
       "tenure": "Freehold",
       "is_new_build": false,

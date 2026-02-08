@@ -26,6 +26,10 @@
     "created_at": {
       "$ref": "#/$defs/dateTime"
     },
+    "currency_code": {
+      "$ref": "credittimeline-v1-enums.json#/$defs/currencyCode",
+      "default": "GBP"
+    },
     "imports": {
       "type": "array",
       "minItems": 1,
@@ -82,6 +86,12 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/searchRecord"
+      }
+    },
+    "credit_scores": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/creditScore"
       }
     },
     "public_records": {
@@ -156,7 +166,8 @@
       "format": "date-time"
     },
     "amount": {
-      "type": "number"
+      "type": "integer",
+      "description": "Monetary amount in minor currency units (pence for GBP)."
     },
     "extensions": {
       "type": "object",
@@ -176,15 +187,7 @@
           "$ref": "#/$defs/id"
         },
         "artifact_type": {
-          "type": "string",
-          "enum": [
-            "pdf",
-            "html",
-            "json",
-            "image",
-            "text",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/rawArtifactType"
         },
         "sha256": {
           "type": "string",
@@ -211,8 +214,7 @@
         "import_id",
         "imported_at",
         "source_system",
-        "acquisition_method",
-        "mapping_version"
+        "acquisition_method"
       ],
       "properties": {
         "import_id": {
@@ -221,27 +223,18 @@
         "imported_at": {
           "$ref": "#/$defs/dateTime"
         },
+        "currency_code": {
+          "$ref": "credittimeline-v1-enums.json#/$defs/currencyCode",
+          "default": "GBP"
+        },
         "source_system": {
-          "type": "string",
-          "enum": [
-            "equifax",
-            "transunion",
-            "experian",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/sourceSystem"
         },
         "source_wrapper": {
           "type": "string"
         },
         "acquisition_method": {
-          "type": "string",
-          "enum": [
-            "pdf_upload",
-            "html_scrape",
-            "api",
-            "image",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/acquisitionMethod"
         },
         "mapping_version": {
           "type": "string"
@@ -275,12 +268,7 @@
           "$ref": "#/$defs/id"
         },
         "confidence": {
-          "type": "string",
-          "enum": [
-            "low",
-            "medium",
-            "high"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/confidenceLevel"
         },
         "extensions": {
           "$ref": "#/$defs/extensions"
@@ -301,12 +289,7 @@
           "$ref": "#/$defs/id"
         },
         "identifier_type": {
-          "type": "string",
-          "enum": [
-            "provider_reference",
-            "application_reference",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/subjectIdentifierType"
         },
         "value": {
           "type": "string"
@@ -324,8 +307,6 @@
       "additionalProperties": false,
       "required": [
         "name_id",
-        "full_name",
-        "name_type",
         "source_import_id"
       ],
       "properties": {
@@ -351,13 +332,7 @@
           "type": "string"
         },
         "name_type": {
-          "type": "string",
-          "enum": [
-            "legal",
-            "alias",
-            "historical",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/nameType"
         },
         "valid_from": {
           "$ref": "#/$defs/date"
@@ -410,9 +385,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "address_id",
-        "normalized_single_line",
-        "country_code"
+        "address_id"
       ],
       "properties": {
         "address_id": {
@@ -455,7 +428,6 @@
       "required": [
         "association_id",
         "address_id",
-        "role",
         "source_import_id"
       ],
       "properties": {
@@ -466,15 +438,8 @@
           "$ref": "#/$defs/id"
         },
         "role": {
-          "type": "string",
-          "enum": [
-            "current",
-            "previous",
-            "linked",
-            "on_agreement",
-            "search_input",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/addressAssociationRole",
+          "default": "other"
         },
         "valid_from": {
           "$ref": "#/$defs/date"
@@ -528,7 +493,6 @@
       "additionalProperties": false,
       "required": [
         "associate_id",
-        "associate_name",
         "source_import_id"
       ],
       "properties": {
@@ -539,21 +503,10 @@
           "type": "string"
         },
         "relationship_basis": {
-          "type": "string",
-          "enum": [
-            "joint_account",
-            "joint_application",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/financialAssociateRelationship"
         },
         "status": {
-          "type": "string",
-          "enum": [
-            "active",
-            "disputed",
-            "removed",
-            "unknown"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/financialAssociateStatus"
         },
         "confirmed_at": {
           "$ref": "#/$defs/date"
@@ -571,7 +524,6 @@
       "additionalProperties": false,
       "required": [
         "electoral_entry_id",
-        "address_id",
         "source_import_id"
       ],
       "properties": {
@@ -591,14 +543,7 @@
           "$ref": "#/$defs/date"
         },
         "change_type": {
-          "type": "string",
-          "enum": [
-            "added",
-            "amended",
-            "deleted",
-            "none",
-            "unknown"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/electoralChangeType"
         },
         "marketing_opt_out": {
           "type": [
@@ -631,27 +576,11 @@
         "roles": {
           "type": "array",
           "items": {
-            "type": "string",
-            "enum": [
-              "furnisher",
-              "searcher",
-              "court_source",
-              "fraud_agency",
-              "other"
-            ]
+            "$ref": "credittimeline-v1-enums.json#/$defs/organisationRole"
           }
         },
         "industry_type": {
-          "type": "string",
-          "enum": [
-            "bank",
-            "telecom",
-            "utility",
-            "insurer",
-            "landlord",
-            "government",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/industryType"
         },
         "source_import_id": {
           "$ref": "#/$defs/id"
@@ -675,12 +604,7 @@
           "$ref": "#/$defs/id"
         },
         "identifier_type": {
-          "type": "string",
-          "enum": [
-            "masked_account_number",
-            "provider_reference",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/tradelineIdentifierType"
         },
         "value": {
           "type": "string"
@@ -698,7 +622,6 @@
       "additionalProperties": false,
       "required": [
         "party_id",
-        "party_role",
         "source_import_id"
       ],
       "properties": {
@@ -706,14 +629,7 @@
           "$ref": "#/$defs/id"
         },
         "party_role": {
-          "type": "string",
-          "enum": [
-            "primary",
-            "secondary",
-            "joint",
-            "guarantor",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/tradelinePartyRole"
         },
         "name": {
           "type": "string"
@@ -738,14 +654,7 @@
           "$ref": "#/$defs/id"
         },
         "term_type": {
-          "type": "string",
-          "enum": [
-            "revolving",
-            "installment",
-            "mortgage",
-            "rental",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/tradelineTermType"
         },
         "term_count": {
           "type": "integer",
@@ -778,6 +687,12 @@
         },
         "as_of_date": {
           "$ref": "#/$defs/date"
+        },
+        "status_current": {
+          "type": "string"
+        },
+        "source_account_ref": {
+          "type": "string"
         },
         "current_balance": {
           "$ref": "#/$defs/amount"
@@ -844,15 +759,7 @@
           "$ref": "#/$defs/month"
         },
         "metric_type": {
-          "type": "string",
-          "enum": [
-            "payment_status",
-            "balance",
-            "credit_limit",
-            "statement_balance",
-            "payment_amount",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/tradelineMetricType"
         },
         "value_numeric": {
           "$ref": "#/$defs/amount"
@@ -861,22 +768,7 @@
           "type": "string"
         },
         "canonical_status": {
-          "type": "string",
-          "enum": [
-            "up_to_date",
-            "in_arrears",
-            "arrangement",
-            "settled",
-            "default",
-            "query",
-            "gone_away",
-            "no_update",
-            "inactive",
-            "written_off",
-            "transferred",
-            "repossession",
-            "unknown"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/canonicalPaymentStatus"
         },
         "raw_status_code": {
           "type": "string"
@@ -923,19 +815,7 @@
           "$ref": "#/$defs/id"
         },
         "event_type": {
-          "type": "string",
-          "enum": [
-            "default",
-            "delinquency",
-            "satisfied",
-            "settled",
-            "arrangement_to_pay",
-            "query",
-            "gone_away",
-            "written_off",
-            "repossession",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/tradelineEventType"
         },
         "event_date": {
           "$ref": "#/$defs/date"
@@ -959,12 +839,14 @@
       "additionalProperties": false,
       "required": [
         "tradeline_id",
-        "account_type",
         "source_import_id"
       ],
       "properties": {
         "tradeline_id": {
           "$ref": "#/$defs/id"
+        },
+        "canonical_id": {
+          "type": "string"
         },
         "furnisher_organisation_id": {
           "$ref": "#/$defs/id"
@@ -973,19 +855,7 @@
           "type": "string"
         },
         "account_type": {
-          "type": "string",
-          "enum": [
-            "credit_card",
-            "mortgage",
-            "unsecured_loan",
-            "current_account",
-            "telecom",
-            "utility",
-            "rental",
-            "budget_account",
-            "insurance",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/tradelineAccountType"
         },
         "opened_at": {
           "$ref": "#/$defs/date"
@@ -1063,8 +933,6 @@
       "additionalProperties": false,
       "required": [
         "search_id",
-        "searched_at",
-        "search_type",
         "source_import_id"
       ],
       "properties": {
@@ -1081,25 +949,10 @@
           "type": "string"
         },
         "search_type": {
-          "type": "string",
-          "enum": [
-            "credit_application",
-            "debt_collection",
-            "quotation",
-            "identity_check",
-            "consumer_enquiry",
-            "aml",
-            "insurance_quote",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/searchType"
         },
         "visibility": {
-          "type": "string",
-          "enum": [
-            "hard",
-            "soft",
-            "unknown"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/searchVisibility"
         },
         "joint_application": {
           "type": [
@@ -1147,7 +1000,6 @@
       "additionalProperties": false,
       "required": [
         "public_record_id",
-        "record_type",
         "source_import_id"
       ],
       "properties": {
@@ -1155,16 +1007,7 @@
           "$ref": "#/$defs/id"
         },
         "record_type": {
-          "type": "string",
-          "enum": [
-            "ccj",
-            "judgment",
-            "bankruptcy",
-            "iva",
-            "dro",
-            "administration_order",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/publicRecordType"
         },
         "court_or_register": {
           "type": "string"
@@ -1179,14 +1022,7 @@
           "$ref": "#/$defs/date"
         },
         "status": {
-          "type": "string",
-          "enum": [
-            "active",
-            "satisfied",
-            "set_aside",
-            "discharged",
-            "unknown"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/publicRecordStatus"
         },
         "address_id": {
           "$ref": "#/$defs/id"
@@ -1204,7 +1040,6 @@
       "additionalProperties": false,
       "required": [
         "notice_id",
-        "text",
         "source_import_id"
       ],
       "properties": {
@@ -1222,12 +1057,7 @@
           "$ref": "#/$defs/date"
         },
         "scope": {
-          "type": "string",
-          "enum": [
-            "file",
-            "address",
-            "entity"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/noticeScope"
         },
         "scope_entity_id": {
           "$ref": "#/$defs/id"
@@ -1245,7 +1075,6 @@
       "additionalProperties": false,
       "required": [
         "property_record_id",
-        "address_id",
         "source_import_id"
       ],
       "properties": {
@@ -1286,7 +1115,6 @@
       "additionalProperties": false,
       "required": [
         "gone_away_id",
-        "network",
         "source_import_id"
       ],
       "properties": {
@@ -1321,8 +1149,6 @@
       "additionalProperties": false,
       "required": [
         "fraud_marker_id",
-        "scheme",
-        "marker_type",
         "source_import_id"
       ],
       "properties": {
@@ -1330,19 +1156,10 @@
           "$ref": "#/$defs/id"
         },
         "scheme": {
-          "type": "string",
-          "enum": [
-            "cifas",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/fraudScheme"
         },
         "marker_type": {
-          "type": "string",
-          "enum": [
-            "protective_registration",
-            "victim_of_impersonation",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/fraudMarkerType"
         },
         "placed_at": {
           "$ref": "#/$defs/date"
@@ -1351,14 +1168,7 @@
           "$ref": "#/$defs/date"
         },
         "address_scope": {
-          "type": "string",
-          "enum": [
-            "current",
-            "previous",
-            "linked",
-            "file",
-            "unknown"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/fraudAddressScope"
         },
         "address_id": {
           "$ref": "#/$defs/id"
@@ -1376,9 +1186,6 @@
       "additionalProperties": false,
       "required": [
         "attributable_item_id",
-        "entity_domain",
-        "summary",
-        "confidence",
         "source_import_id"
       ],
       "properties": {
@@ -1386,15 +1193,7 @@
           "$ref": "#/$defs/id"
         },
         "entity_domain": {
-          "type": "string",
-          "enum": [
-            "tradeline",
-            "search",
-            "address",
-            "public_record",
-            "fraud_marker",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/attributableEntityDomain"
         },
         "linked_entity_id": {
           "$ref": "#/$defs/id"
@@ -1403,12 +1202,7 @@
           "type": "string"
         },
         "confidence": {
-          "type": "string",
-          "enum": [
-            "low",
-            "medium",
-            "high"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/confidenceLevel"
         },
         "reason": {
           "type": "string"
@@ -1426,8 +1220,6 @@
       "additionalProperties": false,
       "required": [
         "dispute_id",
-        "entity_domain",
-        "status",
         "source_import_id"
       ],
       "properties": {
@@ -1435,15 +1227,7 @@
           "$ref": "#/$defs/id"
         },
         "entity_domain": {
-          "type": "string",
-          "enum": [
-            "tradeline",
-            "search",
-            "address",
-            "public_record",
-            "fraud_marker",
-            "other"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/disputeEntityDomain"
         },
         "entity_id": {
           "$ref": "#/$defs/id"
@@ -1455,17 +1239,56 @@
           "$ref": "#/$defs/date"
         },
         "status": {
-          "type": "string",
-          "enum": [
-            "open",
-            "under_review",
-            "resolved",
-            "rejected",
-            "withdrawn"
-          ]
+          "$ref": "credittimeline-v1-enums.json#/$defs/disputeStatus"
         },
         "notes": {
           "type": "string"
+        },
+        "source_import_id": {
+          "$ref": "#/$defs/id"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "creditScore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score_id",
+        "source_import_id"
+      ],
+      "properties": {
+        "score_id": {
+          "$ref": "#/$defs/id"
+        },
+        "score_type": {
+          "$ref": "credittimeline-v1-enums.json#/$defs/creditScoreType"
+        },
+        "score_name": {
+          "type": "string"
+        },
+        "score_value": {
+          "type": "integer"
+        },
+        "score_min": {
+          "type": "integer"
+        },
+        "score_max": {
+          "type": "integer"
+        },
+        "score_band": {
+          "type": "string"
+        },
+        "calculated_at": {
+          "$ref": "#/$defs/date"
+        },
+        "score_factors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "source_import_id": {
           "$ref": "#/$defs/id"

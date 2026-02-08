@@ -1,0 +1,103 @@
+name: Spec Validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install validation/report dependencies
+        run: |
+          npm install -g ajv-cli
+          python -m pip install --upgrade pip
+          python -m pip install json-schema-for-humans
+
+      - name: Run strict spec validation
+        id: validate
+        continue-on-error: true
+        run: |
+          bash scripts/validate-spec.sh \
+            --strict \
+            --require-ajv \
+            --report-dir artifacts/validation
+
+      - name: Generate visual schema report
+        id: visual
+        if: always()
+        continue-on-error: true
+        run: |
+          bash scripts/generate-spec-report.sh \
+            --out-dir artifacts/visual \
+            --validation-report-dir artifacts/validation
+
+      - name: Publish run summary
+        if: always()
+        run: |
+          echo "## CreditTimeline Spec Validation" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ -f artifacts/validation/validation-report.json ]]; then
+            total="$(jq -r '.summary.total' artifacts/validation/validation-report.json)"
+            passed="$(jq -r '.summary.passed' artifacts/validation/validation-report.json)"
+            failed="$(jq -r '.summary.failed' artifacts/validation/validation-report.json)"
+            skipped="$(jq -r '.summary.skipped' artifacts/validation/validation-report.json)"
+
+            echo "- Total checks: $total" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Passed: $passed" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Failed: $failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Skipped: $skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+
+            echo "### Non-passing Checks" >> "$GITHUB_STEP_SUMMARY"
+            jq -r '.checks[] | select(.status != "pass") | "- `\(.id)` (\(.status)): \(.detail)"' artifacts/validation/validation-report.json >> "$GITHUB_STEP_SUMMARY" || true
+          else
+            echo "- Validation report not produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f artifacts/visual/index.html ]]; then
+            echo "- Visual artifact generated at \`artifacts/visual/index.html\`." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- Visual artifact was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload validation artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-validation-report
+          path: artifacts/validation
+          if-no-files-found: warn
+
+      - name: Upload visual artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-visual-report
+          path: artifacts/visual
+          if-no-files-found: warn
+
+      - name: Fail job if validation/report generation failed
+        if: steps.validate.outcome == 'failure' || steps.visual.outcome == 'failure'
+        run: exit 1

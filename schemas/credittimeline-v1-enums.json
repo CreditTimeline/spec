@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://credittimeline.dev/schemas/credittimeline-v1-enums.json",
+  "title": "CreditTimeline v1 Enumerations",
+  "type": "object",
+  "$defs": {
+    "sourceSystem": {
+      "type": "string",
+      "enum": ["equifax", "transunion", "experian", "other"],
+      "description": "Origin credit reference agency or other source system."
+    },
+    "acquisitionMethod": {
+      "type": "string",
+      "enum": ["pdf_upload", "html_scrape", "api", "image", "other"],
+      "description": "How the report data was acquired."
+    },
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Confidence level for a mapped value."
+    },
+    "subjectIdentifierType": {
+      "type": "string",
+      "enum": ["provider_reference", "application_reference", "other"],
+      "description": "Identifier types for subject references."
+    },
+    "nameType": {
+      "type": "string",
+      "enum": ["legal", "alias", "historical", "other"],
+      "description": "Type of name record."
+    },
+    "addressAssociationRole": {
+      "type": "string",
+      "enum": ["current", "previous", "linked", "on_agreement", "search_input", "other"],
+      "description": "Role of an address for the subject or entity."
+    },
+    "financialAssociateRelationship": {
+      "type": "string",
+      "enum": ["joint_account", "joint_application", "other"],
+      "description": "Basis of a financial association."
+    },
+    "financialAssociateStatus": {
+      "type": "string",
+      "enum": ["active", "disputed", "removed", "unknown"],
+      "description": "Status of a financial association."
+    },
+    "electoralChangeType": {
+      "type": "string",
+      "enum": ["added", "amended", "deleted", "none", "unknown"],
+      "description": "Change type for an electoral roll entry."
+    },
+    "organisationRole": {
+      "type": "string",
+      "enum": ["furnisher", "searcher", "court_source", "fraud_agency", "other"],
+      "description": "Role of an organisation in the report."
+    },
+    "industryType": {
+      "type": "string",
+      "enum": ["bank", "telecom", "utility", "insurer", "landlord", "government", "other"],
+      "description": "Industry classification for an organisation."
+    },
+    "tradelineAccountType": {
+      "type": "string",
+      "enum": [
+        "credit_card",
+        "mortgage",
+        "secured_loan",
+        "unsecured_loan",
+        "current_account",
+        "telecom",
+        "utility",
+        "rental",
+        "budget_account",
+        "insurance",
+        "other",
+        "unknown"
+      ],
+      "description": "Canonical account type for a tradeline."
+    },
+    "tradelineIdentifierType": {
+      "type": "string",
+      "enum": ["masked_account_number", "provider_reference", "other"],
+      "description": "Identifier types for tradeline matching."
+    },
+    "tradelinePartyRole": {
+      "type": "string",
+      "enum": ["primary", "secondary", "joint", "guarantor", "other"],
+      "description": "Role of a party on a credit agreement."
+    },
+    "tradelineTermType": {
+      "type": "string",
+      "enum": ["revolving", "installment", "mortgage", "rental", "other"],
+      "description": "Term type for a credit agreement."
+    },
+    "tradelineMetricType": {
+      "type": "string",
+      "enum": ["payment_status", "balance", "credit_limit", "statement_balance", "payment_amount", "other"],
+      "description": "Metric types used in monthly history."
+    },
+    "canonicalPaymentStatus": {
+      "type": "string",
+      "enum": [
+        "up_to_date",
+        "in_arrears",
+        "arrangement",
+        "settled",
+        "default",
+        "query",
+        "gone_away",
+        "no_update",
+        "inactive",
+        "written_off",
+        "transferred",
+        "repossession",
+        "unknown"
+      ],
+      "description": "Normalized payment status bucket."
+    },
+    "tradelineEventType": {
+      "type": "string",
+      "enum": [
+        "default",
+        "delinquency",
+        "satisfied",
+        "settled",
+        "arrangement_to_pay",
+        "query",
+        "gone_away",
+        "written_off",
+        "repossession",
+        "other"
+      ],
+      "description": "Key milestone event types for accounts."
+    },
+    "searchType": {
+      "type": "string",
+      "enum": [
+        "credit_application",
+        "debt_collection",
+        "quotation",
+        "identity_check",
+        "consumer_enquiry",
+        "aml",
+        "insurance_quote",
+        "other"
+      ],
+      "description": "Type of credit search or enquiry."
+    },
+    "searchVisibility": {
+      "type": "string",
+      "enum": ["hard", "soft", "unknown"],
+      "description": "Visibility of a search to other lenders."
+    },
+    "publicRecordType": {
+      "type": "string",
+      "enum": ["ccj", "judgment", "bankruptcy", "iva", "dro", "administration_order", "other"],
+      "description": "Public record or court entry type."
+    },
+    "publicRecordStatus": {
+      "type": "string",
+      "enum": ["active", "satisfied", "set_aside", "discharged", "unknown"],
+      "description": "Status of a public record."
+    },
+    "noticeScope": {
+      "type": "string",
+      "enum": ["file", "address", "entity"],
+      "description": "Scope of a notice of correction."
+    },
+    "fraudScheme": {
+      "type": "string",
+      "enum": ["cifas", "other"],
+      "description": "Fraud marker scheme."
+    },
+    "fraudMarkerType": {
+      "type": "string",
+      "enum": ["protective_registration", "victim_of_impersonation", "other"],
+      "description": "Type of fraud marker."
+    },
+    "fraudAddressScope": {
+      "type": "string",
+      "enum": ["current", "previous", "linked", "file", "unknown"],
+      "description": "Address scope for a fraud marker."
+    },
+    "attributableEntityDomain": {
+      "type": "string",
+      "enum": ["tradeline", "search", "address", "public_record", "fraud_marker", "other"],
+      "description": "Domain for attributable or uncertain data."
+    },
+    "disputeEntityDomain": {
+      "type": "string",
+      "enum": ["tradeline", "search", "address", "public_record", "fraud_marker", "other"],
+      "description": "Entity domain for a dispute."
+    },
+    "disputeStatus": {
+      "type": "string",
+      "enum": ["open", "under_review", "resolved", "rejected", "withdrawn"],
+      "description": "Status of a dispute."
+    },
+    "creditScoreType": {
+      "type": "string",
+      "enum": ["credit_score", "affordability", "stability", "custom", "other"],
+      "description": "Type of score or scoring model."
+    },
+    "currencyCode": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 currency code."
+    },
+    "rawArtifactType": {
+      "type": "string",
+      "enum": ["pdf", "html", "json", "image", "text", "other"],
+      "description": "Raw artifact file type."
+    }
+  }
+}

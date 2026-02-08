@@ -1,5 +1,11 @@
 PRAGMA foreign_keys = ON;
 
+CREATE TABLE IF NOT EXISTS schema_version (
+  version INTEGER PRIMARY KEY,
+  applied_at TEXT NOT NULL DEFAULT (datetime('now')),
+  description TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS subject (
   subject_id TEXT PRIMARY KEY,
   created_at TEXT NOT NULL,
@@ -9,6 +15,7 @@ CREATE TABLE IF NOT EXISTS subject (
 CREATE TABLE IF NOT EXISTS credit_file (
   file_id TEXT PRIMARY KEY,
   schema_version TEXT NOT NULL,
+  currency_code TEXT DEFAULT 'GBP',
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
   created_at TEXT NOT NULL,
   extensions_json TEXT
@@ -19,10 +26,11 @@ CREATE TABLE IF NOT EXISTS import_batch (
   file_id TEXT NOT NULL REFERENCES credit_file(file_id),
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
   imported_at TEXT NOT NULL,
+  currency_code TEXT DEFAULT 'GBP',
   source_system TEXT NOT NULL,
   source_wrapper TEXT,
   acquisition_method TEXT NOT NULL,
-  mapping_version TEXT NOT NULL,
+  mapping_version TEXT,
   confidence_notes TEXT,
   extensions_json TEXT
 );
@@ -41,13 +49,13 @@ CREATE TABLE IF NOT EXISTS raw_artifact (
 CREATE TABLE IF NOT EXISTS person_name (
   name_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  full_name TEXT NOT NULL,
+  full_name TEXT,
   title TEXT,
   given_name TEXT,
   middle_name TEXT,
   family_name TEXT,
   suffix TEXT,
-  name_type TEXT NOT NULL,
+  name_type TEXT,
   valid_from TEXT,
   valid_to TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
@@ -73,8 +81,8 @@ CREATE TABLE IF NOT EXISTS address (
   town_city TEXT,
   county_region TEXT,
   postcode TEXT,
-  country_code TEXT NOT NULL,
-  normalized_single_line TEXT NOT NULL,
+  country_code TEXT,
+  normalized_single_line TEXT,
   extensions_json TEXT
 );
 
@@ -82,7 +90,7 @@ CREATE TABLE IF NOT EXISTS address_association (
   association_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
   address_id TEXT NOT NULL REFERENCES address(address_id),
-  role TEXT NOT NULL,
+  role TEXT,
   valid_from TEXT,
   valid_to TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
@@ -105,7 +113,7 @@ CREATE TABLE IF NOT EXISTS address_link (
 CREATE TABLE IF NOT EXISTS financial_associate (
   associate_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  associate_name TEXT NOT NULL,
+  associate_name TEXT,
   relationship_basis TEXT,
   status TEXT,
   confirmed_at TEXT,
@@ -117,7 +125,7 @@ CREATE TABLE IF NOT EXISTS financial_associate (
 CREATE TABLE IF NOT EXISTS electoral_roll_entry (
   electoral_entry_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  address_id TEXT NOT NULL REFERENCES address(address_id),
+  address_id TEXT REFERENCES address(address_id),
   name_on_register TEXT,
   registered_from TEXT,
   registered_to TEXT,
@@ -141,15 +149,16 @@ CREATE TABLE IF NOT EXISTS organisation (
 
 CREATE TABLE IF NOT EXISTS tradeline (
   tradeline_id TEXT PRIMARY KEY,
+  canonical_id TEXT,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
   furnisher_organisation_id TEXT REFERENCES organisation(organisation_id),
   furnisher_name_raw TEXT,
-  account_type TEXT NOT NULL,
+  account_type TEXT,
   opened_at TEXT,
   closed_at TEXT,
   status_current TEXT,
   repayment_frequency TEXT,
-  regular_payment_amount NUMERIC,
+  regular_payment_amount INTEGER,
   supplementary_info TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
   source_system TEXT NOT NULL,
@@ -169,7 +178,7 @@ CREATE TABLE IF NOT EXISTS tradeline_identifier (
 CREATE TABLE IF NOT EXISTS tradeline_party (
   party_id TEXT PRIMARY KEY,
   tradeline_id TEXT NOT NULL REFERENCES tradeline(tradeline_id),
-  party_role TEXT NOT NULL,
+  party_role TEXT,
   name TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
   source_system TEXT NOT NULL,
@@ -181,7 +190,7 @@ CREATE TABLE IF NOT EXISTS tradeline_terms (
   tradeline_id TEXT NOT NULL REFERENCES tradeline(tradeline_id),
   term_type TEXT,
   term_count INTEGER,
-  term_payment_amount NUMERIC,
+  term_payment_amount INTEGER,
   payment_start_date TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
   source_system TEXT NOT NULL,
@@ -192,14 +201,16 @@ CREATE TABLE IF NOT EXISTS tradeline_snapshot (
   snapshot_id TEXT PRIMARY KEY,
   tradeline_id TEXT NOT NULL REFERENCES tradeline(tradeline_id),
   as_of_date TEXT,
-  current_balance NUMERIC,
-  opening_balance NUMERIC,
-  credit_limit NUMERIC,
-  delinquent_balance NUMERIC,
-  payment_amount NUMERIC,
-  statement_balance NUMERIC,
+  status_current TEXT,
+  source_account_ref TEXT,
+  current_balance INTEGER,
+  opening_balance INTEGER,
+  credit_limit INTEGER,
+  delinquent_balance INTEGER,
+  payment_amount INTEGER,
+  statement_balance INTEGER,
   minimum_payment_received INTEGER,
-  cash_advance_amount NUMERIC,
+  cash_advance_amount INTEGER,
   cash_advance_count INTEGER,
   credit_limit_change TEXT,
   promotional_rate_flag INTEGER,
@@ -213,7 +224,7 @@ CREATE TABLE IF NOT EXISTS tradeline_monthly_metric (
   tradeline_id TEXT NOT NULL REFERENCES tradeline(tradeline_id),
   period TEXT NOT NULL,
   metric_type TEXT NOT NULL,
-  value_numeric NUMERIC,
+  value_numeric INTEGER,
   value_text TEXT,
   canonical_status TEXT,
   raw_status_code TEXT,
@@ -230,7 +241,7 @@ CREATE TABLE IF NOT EXISTS tradeline_event (
   tradeline_id TEXT NOT NULL REFERENCES tradeline(tradeline_id),
   event_type TEXT NOT NULL,
   event_date TEXT NOT NULL,
-  amount NUMERIC,
+  amount INTEGER,
   notes TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
   source_system TEXT NOT NULL,
@@ -240,10 +251,10 @@ CREATE TABLE IF NOT EXISTS tradeline_event (
 CREATE TABLE IF NOT EXISTS search_record (
   search_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  searched_at TEXT NOT NULL,
+  searched_at TEXT,
   organisation_id TEXT REFERENCES organisation(organisation_id),
   organisation_name_raw TEXT,
-  search_type TEXT NOT NULL,
+  search_type TEXT,
   visibility TEXT,
   joint_application INTEGER,
   input_name TEXT,
@@ -256,12 +267,28 @@ CREATE TABLE IF NOT EXISTS search_record (
   extensions_json TEXT
 );
 
+CREATE TABLE IF NOT EXISTS credit_score (
+  score_id TEXT PRIMARY KEY,
+  subject_id TEXT NOT NULL REFERENCES subject(subject_id),
+  score_type TEXT,
+  score_name TEXT,
+  score_value INTEGER,
+  score_min INTEGER,
+  score_max INTEGER,
+  score_band TEXT,
+  calculated_at TEXT,
+  score_factors_json TEXT,
+  source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
+  source_system TEXT NOT NULL,
+  extensions_json TEXT
+);
+
 CREATE TABLE IF NOT EXISTS public_record (
   public_record_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  record_type TEXT NOT NULL,
+  record_type TEXT,
   court_or_register TEXT,
-  amount NUMERIC,
+  amount INTEGER,
   recorded_at TEXT,
   satisfied_at TEXT,
   status TEXT,
@@ -274,7 +301,7 @@ CREATE TABLE IF NOT EXISTS public_record (
 CREATE TABLE IF NOT EXISTS notice_of_correction (
   notice_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  text TEXT NOT NULL,
+  text TEXT,
   created_at TEXT,
   expires_at TEXT,
   scope TEXT,
@@ -287,9 +314,9 @@ CREATE TABLE IF NOT EXISTS notice_of_correction (
 CREATE TABLE IF NOT EXISTS property_record (
   property_record_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  address_id TEXT NOT NULL REFERENCES address(address_id),
+  address_id TEXT REFERENCES address(address_id),
   property_type TEXT,
-  price_paid NUMERIC,
+  price_paid INTEGER,
   deed_date TEXT,
   tenure TEXT,
   is_new_build INTEGER,
@@ -301,7 +328,7 @@ CREATE TABLE IF NOT EXISTS property_record (
 CREATE TABLE IF NOT EXISTS gone_away_record (
   gone_away_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  network TEXT NOT NULL,
+  network TEXT,
   recorded_at TEXT,
   old_address_id TEXT REFERENCES address(address_id),
   new_address_id TEXT REFERENCES address(address_id),
@@ -314,8 +341,8 @@ CREATE TABLE IF NOT EXISTS gone_away_record (
 CREATE TABLE IF NOT EXISTS fraud_marker (
   fraud_marker_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  scheme TEXT NOT NULL,
-  marker_type TEXT NOT NULL,
+  scheme TEXT,
+  marker_type TEXT,
   placed_at TEXT,
   expires_at TEXT,
   address_scope TEXT,
@@ -328,10 +355,10 @@ CREATE TABLE IF NOT EXISTS fraud_marker (
 CREATE TABLE IF NOT EXISTS attributable_item (
   attributable_item_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  entity_domain TEXT NOT NULL,
+  entity_domain TEXT,
   linked_entity_id TEXT,
-  summary TEXT NOT NULL,
-  confidence TEXT NOT NULL,
+  summary TEXT,
+  confidence TEXT,
   reason TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
   source_system TEXT NOT NULL,
@@ -341,11 +368,11 @@ CREATE TABLE IF NOT EXISTS attributable_item (
 CREATE TABLE IF NOT EXISTS dispute (
   dispute_id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL REFERENCES subject(subject_id),
-  entity_domain TEXT NOT NULL,
+  entity_domain TEXT,
   entity_id TEXT,
   opened_at TEXT,
   closed_at TEXT,
-  status TEXT NOT NULL,
+  status TEXT,
   notes TEXT,
   source_import_id TEXT NOT NULL REFERENCES import_batch(import_id),
   source_system TEXT NOT NULL,
@@ -386,6 +413,9 @@ CREATE INDEX IF NOT EXISTS idx_org_subject_name
 CREATE INDEX IF NOT EXISTS idx_tradeline_subject_source
   ON tradeline(subject_id, source_system, status_current);
 
+CREATE INDEX IF NOT EXISTS idx_tradeline_canonical_id
+  ON tradeline(canonical_id);
+
 CREATE INDEX IF NOT EXISTS idx_tradeline_snapshot_tradeline_date
   ON tradeline_snapshot(tradeline_id, as_of_date DESC);
 
@@ -398,6 +428,9 @@ CREATE INDEX IF NOT EXISTS idx_tradeline_metric_source_period
 CREATE INDEX IF NOT EXISTS idx_search_subject_date
   ON search_record(subject_id, searched_at DESC, visibility);
 
+CREATE INDEX IF NOT EXISTS idx_credit_score_subject_date
+  ON credit_score(subject_id, calculated_at DESC);
+
 CREATE INDEX IF NOT EXISTS idx_public_record_subject_status
   ON public_record(subject_id, status, recorded_at DESC);
 
@@ -406,3 +439,6 @@ CREATE INDEX IF NOT EXISTS idx_fraud_marker_subject
 
 CREATE INDEX IF NOT EXISTS idx_dispute_subject_status
   ON dispute(subject_id, status, opened_at DESC);
+
+INSERT OR IGNORE INTO schema_version (version, description)
+VALUES (1, 'Initial schema creation - CreditTimeline v1');

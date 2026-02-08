@@ -8,6 +8,15 @@
     "unknown_account_type": "other",
     "unknown_payment_status": "unknown"
   },
+  "currency_inheritance": {
+    "file_default_currency_code": "GBP",
+    "import_currency_override": "imports[].currency_code",
+    "rule": "Use imports[].currency_code when present, otherwise inherit file currency_code, otherwise default to GBP."
+  },
+  "ingest_fallbacks": {
+    "mapping_version_when_missing": "adapter-unknown",
+    "mapping_version_rule": "Reference implementation should set mapping_version to adapter release/version placeholder when producer omits it."
+  },
   "address_role_map": {
     "equifax": {
       "current address": "current",
@@ -187,7 +196,8 @@
     "negative_formats": [
       "-78"
     ],
-    "parse_to": "decimal"
+    "parse_to": "minor_units",
+    "minor_unit_multiplier": 100
   },
   "date_normalization": {
     "accepted_input_formats": [
@@ -198,9 +208,19 @@
     ],
     "output_format": "YYYY-MM-DD"
   },
+  "score_normalization": {
+    "score_type_fallback": "other",
+    "calculated_at_fallback": "report_date",
+    "keep_raw_factor_text": true,
+    "range_validation_rule": "When score_min and score_max are present, ensure score_value is between bounds; otherwise keep raw and emit quality warning."
+  },
+  "monthly_metric_dedupe": {
+    "metric_value_key_rule": "For payment_status metrics, use raw_status_code (fallback canonical_status then value_text). For numeric metrics, use value_numeric as a canonical string. Otherwise use value_text. Prefix with metric_type and normalize whitespace to build a deterministic metric_value_key."
+  },
   "notes": [
     "Always preserve raw source values in extensions when confidence is below high.",
     "Do not drop records solely because organization normalization fails; keep organisation_name_raw.",
-    "When search type is unknown, set search_type=other and preserve purpose_text."
+    "When search type is unknown, set search_type=other and preserve purpose_text.",
+    "JSON Schema defaults are annotations; ingest should materialize currency and mapping_version defaults before persistence."
   ]
 }

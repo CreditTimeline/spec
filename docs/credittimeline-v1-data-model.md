@@ -19,6 +19,8 @@ Non-goals:
 3. Time-series data is modeled by month (`YYYY-MM`) rather than compact status strings.
 4. Unknown/future fields go into `extensions` instead of breaking schema compatibility.
 5. Canonical IDs are stable within a subject vault, not globally unique across all users.
+6. Monetary values are stored as integer minor units (pence for GBP) with optional currency codes.
+7. Required fields are intentionally minimal: IDs, provenance pointers, and a small set of schema-defined identity anchors. Most source-derived fields remain optional when absent in provider data.
 
 ## 3. Top-Level Domains
 - Provenance and file lifecycle
@@ -32,6 +34,7 @@ Non-goals:
 - Property valuation
 - Gone away (GAIN-like records)
 - Fraud markers (CIFAS)
+- Credit scores
 - Attributable/uncertain data
 - Disputes
 
@@ -45,6 +48,7 @@ Canonical transport envelope.
 - `file_id`
 - `subject_id`
 - `created_at`
+- `currency_code` (optional, ISO 4217; defaults to GBP)
 - `imports[]`
 - `subject`
 - domain arrays (tradelines, searches, etc.)
@@ -54,10 +58,11 @@ Canonical transport envelope.
 One acquisition run from one source system.
 - `import_id`
 - `imported_at`
+- `currency_code` (optional, ISO 4217; defaults to GBP)
 - `source_system` (`equifax`, `transunion`, `experian`, `other`)
 - `source_wrapper` (e.g., ClearScore, Credit Karma)
-- `acquisition_method` (`pdf_upload`, `html_scrape`, `api`, `image`, `other`)
-- `mapping_version`
+- `acquisition_method` (`pdf_upload`, `html_scrape`, `api`, `image`, `other`) (required)
+- `mapping_version` (optional)
 - `raw_artifacts[]`
 - `confidence_notes`
 - `extensions`
@@ -81,7 +86,7 @@ Original unnormalized input metadata.
 
 #### `PersonName`
 - `name_id`
-- `full_name`
+- `full_name` (optional)
 - `title`, `given_name`, `middle_name`, `family_name`, `suffix`
 - `name_type` (`legal`, `alias`, `historical`, `other`)
 - `valid_from`, `valid_to`
@@ -91,7 +96,7 @@ Original unnormalized input metadata.
 Normalized postal record.
 - `address_id`
 - lines/town/postcode/region/country
-- `normalized_single_line`
+- `normalized_single_line` (optional)
 
 #### `AddressAssociation`
 Links subject (or domain object) to an address with role and dates.
@@ -148,15 +153,17 @@ Notes:
 
 #### `Tradeline`
 Stable account-level identity record.
+Use this for canonical identifiers and best-known values; per-import observations live in `TradelineSnapshot`.
 - `tradeline_id`
+- `canonical_id` (optional stable key for cross-import reconciliation)
 - `furnisher_organisation_id`
-- `account_type` (`credit_card`, `mortgage`, `unsecured_loan`, `current_account`, `telecom`, `utility`, `rental`, `budget_account`, `insurance`, `other`)
+- `account_type` (`credit_card`, `mortgage`, `secured_loan`, `unsecured_loan`, `current_account`, `telecom`, `utility`, `rental`, `budget_account`, `insurance`, `other`, `unknown`)
 - `opened_at`, `closed_at`
 - `status_current`
 - `repayment_frequency`
 - `regular_payment_amount`
 - `supplementary_info`
-- `source_import_id`
+- `source_import_id` (required origin/provenance pointer)
 
 #### `TradelineIdentifier`
 - masked account numbers/references per source.
@@ -178,6 +185,8 @@ Import-scoped values for mutable fields.
 - `snapshot_id`
 - `tradeline_id`
 - `as_of_date`
+- `status_current`
+- `source_account_ref`
 - `current_balance`
 - `opening_balance`
 - `credit_limit`
@@ -203,6 +212,9 @@ Unified table for monthly time-series (simplifies schema and future extension).
 - `raw_status_code`
 - `reported_at` (optional)
 - `source_import_id`
+
+Storage note:
+- SQLite ingest derives `metric_value_key` for deterministic dedupe/uniqueness. This key is a storage implementation detail, not a transport payload field.
 
 #### `TradelineEvent`
 Important account milestones.
@@ -285,7 +297,21 @@ Important account milestones.
 - `address_id`
 - `source_import_id`
 
-### 4.13 Attributable / Uncertain Data
+### 4.13 Credit Scores
+
+#### `CreditScore`
+Scores are per import and attributable via `source_import_id`.
+- `score_id`
+- `score_type` (`credit_score`, `affordability`, `stability`, `custom`, `other`)
+- `score_name`
+- `score_value`
+- `score_min`, `score_max`
+- `score_band`
+- `calculated_at`
+- `score_factors` (optional array of strings)
+- `source_import_id`
+
+### 4.14 Attributable / Uncertain Data
 
 #### `AttributableItem`
 - `attributable_item_id`
@@ -296,7 +322,7 @@ Important account milestones.
 - `linked_entity_id` (optional)
 - `source_import_id`
 
-### 4.14 Disputes
+### 4.15 Disputes
 
 #### `Dispute`
 - `dispute_id`
@@ -331,11 +357,13 @@ Store two values for monthly payment statuses:
 - `valid_from`/`valid_to`: entity validity range where available.
 - `period`: monthly series bucket (`YYYY-MM`).
 - `reported_at`: when provider says that period’s value was reported/updated.
+- `calculated_at`: when a credit score was calculated.
 
 This supports retroactive corrections and diffing between imports.
 
 ## 7. Extension and Compatibility
 Every entity may include `extensions` as an object map for provider-specific or future fields.
+Enum values are centralized in `schemas/credittimeline-v1-enums.json` to keep adapters consistent.
 
 Versioning:
 - Major changes increment `schema_version` major component (e.g., `1.x` -> `2.0.0`).
