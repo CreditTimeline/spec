@@ -107,6 +107,7 @@ run_generate_schema_doc "$SCHEMA_FILE" "$SCHEMA_DOC_DIR/credittimeline-file.v1.s
 run_generate_schema_doc "$ENUMS_FILE" "$SCHEMA_DOC_DIR/credittimeline-v1-enums.html" "$JSFH_CONFIG"
 
 sqlite3 "$SQLITE_DB" ".read \"$SQL_FILE\""
+chmod 644 "$SQLITE_DB"  # Make readable by Docker container's non-root user
 
 # Download SQLite JDBC driver (not included in schemaspy Docker image)
 # Must mount as a directory to /drivers, not a single file
