@@ -69,17 +69,36 @@ SQLITE_DOC_DIR="$OUT_DIR/sqlite-schema"
 
 mkdir -p "$SCHEMA_DOC_DIR" "$SQLITE_DOC_DIR"
 
-generate-schema-doc --config-template-name js_offline \
-  "$SCHEMA_FILE" \
-  "$SCHEMA_DOC_DIR/credittimeline-file.v1.schema.html"
+run_generate_schema_doc() {
+  local input_schema="$1"
+  local output_file="$2"
+  local cfg_file="$3"
 
-generate-schema-doc --config-template-name js_offline \
-  "$ENUMS_FILE" \
-  "$SCHEMA_DOC_DIR/credittimeline-v1-enums.html"
+  if generate-schema-doc --help 2>&1 | grep -q -- "--config-template-name"; then
+    generate-schema-doc --config-template-name js_offline \
+      "$input_schema" \
+      "$output_file"
+  else
+    if ! generate-schema-doc --config-file "$cfg_file" \
+      "$input_schema" \
+      "$output_file"; then
+      echo "Falling back to default generate-schema-doc template for $input_schema"
+      generate-schema-doc "$input_schema" "$output_file"
+    fi
+  fi
+}
 
 TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/credittimeline-report.XXXXXX")"
 trap 'rm -rf "$TMP_DIR"' EXIT
 SQLITE_DB="$TMP_DIR/credittimeline-v1.db"
+JSFH_CONFIG="$TMP_DIR/json-schema-for-humans.yaml"
+
+cat > "$JSFH_CONFIG" <<'EOF'
+template_name: js_offline
+EOF
+
+run_generate_schema_doc "$SCHEMA_FILE" "$SCHEMA_DOC_DIR/credittimeline-file.v1.schema.html" "$JSFH_CONFIG"
+run_generate_schema_doc "$ENUMS_FILE" "$SCHEMA_DOC_DIR/credittimeline-v1-enums.html" "$JSFH_CONFIG"
 
 sqlite3 "$SQLITE_DB" ".read \"$SQL_FILE\""
 
