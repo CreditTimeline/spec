@@ -67,6 +67,7 @@ require_command "generate-schema-doc"
 require_command "sqlite3"
 require_command "docker"
 require_command "curl"
+require_command "python3"
 
 GENERATED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
@@ -104,7 +105,7 @@ template_name: js_offline
 EOF
 
 run_generate_schema_doc "$SCHEMA_FILE" "$SCHEMA_DOC_DIR/credittimeline-file.v1.schema.html" "$JSFH_CONFIG"
-run_generate_schema_doc "$ENUMS_FILE" "$SCHEMA_DOC_DIR/credittimeline-v1-enums.html" "$JSFH_CONFIG"
+python3 "$ROOT_DIR/scripts/generate-enum-docs.py" "$ENUMS_FILE" "$SCHEMA_DOC_DIR/credittimeline-v1-enums.html"
 
 sqlite3 "$SQLITE_DB" ".read \"$SQL_FILE\""
 chmod 644 "$SQLITE_DB"  # Make readable by Docker container's non-root user
