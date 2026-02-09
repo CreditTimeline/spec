@@ -1,0 +1,23 @@
+[project]
+site_name = "CreditTimeline Spec Documentation"
+site_description = "Provider-neutral specification for UK credit report data."
+docs_dir = "artifacts/site-src"
+site_dir = "artifacts/site"
+nav = [
+  { "Home" = "index.md" },
+  { "Guides" = [
+    "guides/data-model.md",
+    "guides/transport-format.md",
+    "guides/sqlite-storage.md",
+    "guides/provider-crosswalk-guide.md",
+  ]},
+  { "Schema Documentation" = [
+    "schema-docs/credittimeline-file.v1.schema.html",
+    "schema-docs/credittimeline-v1-enums.html",
+    "sqlite-schema/index.html",
+  ]},
+  { "Validation" = [
+    "validation/summary.md",
+    "validation/validation-report.json",
+  ]},
+]

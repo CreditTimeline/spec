@@ -36,7 +36,7 @@ jobs:
         run: |
           npm install -g ajv-cli
           python -m pip install --upgrade pip
-          python -m pip install json-schema-for-humans
+          python -m pip install json-schema-for-humans zensical
 
       - name: Run validation
         continue-on-error: true

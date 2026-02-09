@@ -2,170 +2,124 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SITE_DIR="${1:-$ROOT_DIR/artifacts/site}"
-VISUAL_DIR="${2:-$ROOT_DIR/artifacts/visual}"
-VALIDATION_DIR="${3:-$ROOT_DIR/artifacts/validation}"
+SITE_DIR_INPUT="${1:-$ROOT_DIR/artifacts/site}"
+VISUAL_DIR_INPUT="${2:-$ROOT_DIR/artifacts/visual}"
+VALIDATION_DIR_INPUT="${3:-$ROOT_DIR/artifacts/validation}"
 
-mkdir -p "$SITE_DIR"
+SITE_SRC_DIR="$ROOT_DIR/artifacts/site-src"
+CONFIG_FILE="$ROOT_DIR/zensical.toml"
+TMP_CONFIG_FILE="$(mktemp "$ROOT_DIR/.zensical.build.XXXXXX.toml")"
 
-# Copy visual report (the main generated content)
-if [[ -d "$VISUAL_DIR" ]]; then
-  cp -r "$VISUAL_DIR"/* "$SITE_DIR/"
+cleanup() {
+  rm -f "$TMP_CONFIG_FILE"
+}
+trap cleanup EXIT
+
+require_command() {
+  local cmd="$1"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Missing required command: $cmd" >&2
+    exit 1
+  fi
+}
+
+resolve_absolute_path() {
+  local value="$1"
+  python3 - "$value" <<'PY'
+import os
+import sys
+
+print(os.path.abspath(sys.argv[1]))
+PY
+}
+
+relative_to_root() {
+  local absolute_path="$1"
+  local root_dir="$2"
+  python3 - "$absolute_path" "$root_dir" <<'PY'
+import os
+import sys
+
+target = os.path.abspath(sys.argv[1])
+root = os.path.abspath(sys.argv[2])
+
+print(os.path.relpath(target, root))
+PY
+}
+
+copy_directory_if_exists() {
+  local source_dir="$1"
+  local destination_dir="$2"
+
+  if [[ -d "$source_dir" ]]; then
+    cp -R "$source_dir" "$destination_dir"
+  fi
+}
+
+require_command "python3"
+require_command "zensical"
+
+SITE_DIR_ABS="$(resolve_absolute_path "$SITE_DIR_INPUT")"
+VISUAL_DIR_ABS="$(resolve_absolute_path "$VISUAL_DIR_INPUT")"
+VALIDATION_DIR_ABS="$(resolve_absolute_path "$VALIDATION_DIR_INPUT")"
+SITE_DIR_REL="$(relative_to_root "$SITE_DIR_ABS" "$ROOT_DIR")"
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+  echo "Missing required config file: $CONFIG_FILE" >&2
+  exit 1
 fi
 
-# Copy validation artifacts
-if [[ -d "$VALIDATION_DIR" ]]; then
-  mkdir -p "$SITE_DIR/validation"
-  cp -r "$VALIDATION_DIR"/* "$SITE_DIR/validation/"
+rm -rf "$SITE_SRC_DIR"
+mkdir -p "$SITE_SRC_DIR/guides" "$SITE_SRC_DIR/validation"
+
+cp "$ROOT_DIR/docs/credittimeline-v1-data-model.md" "$SITE_SRC_DIR/guides/data-model.md"
+cp "$ROOT_DIR/docs/credittimeline-v1-transport.md" "$SITE_SRC_DIR/guides/transport-format.md"
+cp "$ROOT_DIR/docs/credittimeline-v1-storage-sqlite.md" "$SITE_SRC_DIR/guides/sqlite-storage.md"
+cp "$ROOT_DIR/docs/provider-crosswalk-matrix.md" "$SITE_SRC_DIR/guides/provider-crosswalk-guide.md"
+
+copy_directory_if_exists "$VISUAL_DIR_ABS/schema-docs" "$SITE_SRC_DIR/"
+copy_directory_if_exists "$VISUAL_DIR_ABS/sqlite-schema" "$SITE_SRC_DIR/"
+
+if [[ -f "$VALIDATION_DIR_ABS/validation-summary.md" ]]; then
+  cp "$VALIDATION_DIR_ABS/validation-summary.md" "$SITE_SRC_DIR/validation/summary.md"
+else
+  cat > "$SITE_SRC_DIR/validation/summary.md" <<'EOF'
+# Validation Summary
+
+Validation summary was not produced for this run.
+EOF
 fi
 
-# Copy markdown docs
-mkdir -p "$SITE_DIR/docs"
-cp "$ROOT_DIR"/docs/*.md "$SITE_DIR/docs/"
+if [[ -f "$VALIDATION_DIR_ABS/validation-report.json" ]]; then
+  cp "$VALIDATION_DIR_ABS/validation-report.json" "$SITE_SRC_DIR/validation/validation-report.json"
+fi
 
-# Generate main landing page (enhanced version)
-cat > "$SITE_DIR/index.html" << 'LANDING_EOF'
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CreditTimeline Spec Documentation</title>
-  <style>
-    :root {
-      --bg: #f6f8fb;
-      --fg: #10243e;
-      --muted: #4a617f;
-      --card: #ffffff;
-      --accent: #0054a6;
-      --success: #16a34a;
-      --border: #e2e8f0;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 2rem;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
-      line-height: 1.6;
-    }
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .header h1 {
-      margin: 0 0 0.5rem;
-      font-size: 2rem;
-    }
-    .header p {
-      color: var(--muted);
-      margin: 0;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(16, 36, 62, 0.08);
-      border: 1px solid var(--border);
-    }
-    .card h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .card p {
-      color: var(--muted);
-      margin: 0 0 1rem;
-      font-size: 0.95rem;
-    }
-    .card ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .card li {
-      padding: 0.5rem 0;
-      border-top: 1px solid var(--border);
-    }
-    .card li:first-child {
-      border-top: none;
-      padding-top: 0;
-    }
-    .card a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .card a:hover {
-      text-decoration: underline;
-    }
-    .icon {
-      font-size: 1.5rem;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 3rem;
-      color: var(--muted);
-      font-size: 0.875rem;
-    }
-  </style>
-</head>
-<body>
-  <main>
-    <div class="header">
-      <h1>CreditTimeline Spec</h1>
-      <p>Provider-neutral data model for UK credit report data</p>
-    </div>
+cat > "$SITE_SRC_DIR/index.md" <<'EOF'
+# CreditTimeline Spec
 
-    <div class="grid">
-      <div class="card">
-        <h2><span class="icon">📋</span> Schema Documentation</h2>
-        <p>Interactive schema explorer and type definitions</p>
-        <ul>
-          <li><a href="./schema-docs/credittimeline-file.v1.schema.html">Transport Schema (JSON Schema)</a></li>
-          <li><a href="./schema-docs/credittimeline-v1-enums.html">Shared Enums</a></li>
-          <li><a href="./sqlite-schema/index.html">SQLite Schema Explorer</a></li>
-        </ul>
-      </div>
+Provider-neutral data model for UK credit report data over time.
 
-      <div class="card">
-        <h2><span class="icon">📖</span> Guides & Specifications</h2>
-        <p>Human-readable documentation</p>
-        <ul>
-          <li><a href="./docs/credittimeline-v1-data-model.md">Data Model Specification</a></li>
-          <li><a href="./docs/credittimeline-v1-transport.md">Transport Format</a></li>
-          <li><a href="./docs/credittimeline-v1-storage-sqlite.md">SQLite Storage</a></li>
-          <li><a href="./docs/provider-crosswalk-matrix.md">Provider Crosswalk Guide</a></li>
-        </ul>
-      </div>
+## Guides and specifications
 
-      <div class="card">
-        <h2><span class="icon">✅</span> Validation Reports</h2>
-        <p>Latest spec validation results</p>
-        <ul>
-          <li><a href="./validation/validation-summary.md">Validation Summary</a></li>
-          <li><a href="./validation/validation-report.json">Detailed Report (JSON)</a></li>
-        </ul>
-      </div>
-    </div>
+- [Data Model Specification](guides/data-model.md)
+- [Transport Format](guides/transport-format.md)
+- [SQLite Storage](guides/sqlite-storage.md)
+- [Provider Crosswalk Guide](guides/provider-crosswalk-guide.md)
 
-    <div class="footer">
-      <p>Generated by CreditTimeline Spec CI</p>
-    </div>
-  </main>
-</body>
-</html>
-LANDING_EOF
+## Interactive viewers
 
-echo "Site built at: $SITE_DIR"
+- [Transport Schema (JSON Schema)](schema-docs/credittimeline-file.v1.schema.html)
+- [Shared Enums](schema-docs/credittimeline-v1-enums.html)
+- [SQLite Schema Explorer](sqlite-schema/index.html)
+
+## Validation output
+
+- [Validation Summary](validation/summary.md)
+- [Validation Report (JSON)](validation/validation-report.json)
+EOF
+
+sed "s|^site_dir = \".*\"$|site_dir = \"$SITE_DIR_REL\"|" "$CONFIG_FILE" > "$TMP_CONFIG_FILE"
+
+zensical build --clean --config-file "$TMP_CONFIG_FILE"
+
+echo "Site built at: $SITE_DIR_ABS"
