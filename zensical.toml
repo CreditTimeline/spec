@@ -6,18 +6,18 @@ site_dir = "artifacts/site"
 nav = [
   { "Home" = "index.md" },
   { "Guides" = [
-    "guides/data-model.md",
-    "guides/transport-format.md",
-    "guides/sqlite-storage.md",
-    "guides/provider-crosswalk-guide.md",
+    { "Data Model Specification" = "guides/data-model.md" },
+    { "Transport Format" = "guides/transport-format.md" },
+    { "SQLite Storage" = "guides/sqlite-storage.md" },
+    { "Provider Crosswalk Guide" = "guides/provider-crosswalk-guide.md" },
   ]},
   { "Schema Documentation" = [
-    "schema-docs/credittimeline-file.v1.schema.html",
-    "schema-docs/credittimeline-v1-enums.html",
-    "sqlite-schema/index.html",
+    { "Transport Schema (JSON Schema)" = "schema-docs/credittimeline-file.v1.schema.html" },
+    { "Shared Enums" = "schema-docs/credittimeline-v1-enums.html" },
+    { "SQLite Schema Explorer" = "sqlite-schema/index.html" },
   ]},
   { "Validation" = [
-    "validation/summary.md",
-    "validation/validation-report.json",
+    { "Validation Summary" = "validation/summary.md" },
+    { "Validation Report (JSON)" = "validation/validation-report.json" },
   ]},
 ]
