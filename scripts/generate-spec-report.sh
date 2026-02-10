@@ -118,18 +118,22 @@ mkdir -p "$DRIVERS_DIR"
 curl -fsSL -o "$DRIVERS_DIR/sqlite-jdbc.jar" \
   "https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/${SQLITE_DRIVER_VERSION}/sqlite-jdbc-${SQLITE_DRIVER_VERSION}.jar"
 
+SCHEMASPY_META="$ROOT_DIR/schemaspy/schemaspy-meta.xml"
+
 docker run --rm \
   --user "$(id -u):$(id -g)" \
   -v "$TMP_DIR:/db:ro" \
   -v "$SQLITE_DOC_DIR:/output" \
   -v "$DRIVERS_DIR:/drivers:ro" \
+  -v "$SCHEMASPY_META:/meta/schemaspy-meta.xml:ro" \
   schemaspy/schemaspy:latest \
   -t sqlite-xerial \
   -db /db/credittimeline-v1.db \
   -s main \
   -cat % \
   -sso \
-  -vizjs
+  -vizjs \
+  -meta /meta/schemaspy-meta.xml
 
 VALIDATION_LINK_NOTE="Validation summary not bundled in this artifact."
 if [[ -n "$VALIDATION_REPORT_DIR" ]]; then

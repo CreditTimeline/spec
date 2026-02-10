@@ -73,6 +73,10 @@ CREATE TABLE IF NOT EXISTS subject_identifier (
   extensions_json TEXT
 );
 
+-- Address lines (line_1, line_2, line_3) follow UK postal addressing conventions.
+-- This is a fixed, bounded set — not an unbounded repeating group — so separate
+-- columns are preferred over a child table. SchemaSpy's "incrementing column names"
+-- anomaly for this table is a known false positive.
 CREATE TABLE IF NOT EXISTS address (
   address_id TEXT PRIMARY KEY,
   line_1 TEXT,
