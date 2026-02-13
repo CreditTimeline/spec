@@ -1,5 +1,4 @@
 artifacts/
-schemaspy/
 
 # Temporary config files created by docs build script
 .zensical.build.*.toml
